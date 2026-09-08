@@ -8,42 +8,19 @@ Hosted on Netlify, auto-deployed from the `main` branch of this repo.
 ```
 index.html              Home page
 404.html                Custom not-found page
-contact/index.html      Contact page (details + quote form)
-reviews/index.html      Reviews page — only generated once REVIEWS is populated
 <service>/index.html    One folder per service = one clean URL
                         (pool-cleaning, pool-openings, chemical-balancing,
                          liner-installation, spa-service, filter-maintenance,
                          equipment-repair, pressure-washing, pool-closings,
-                         leak-detection)
+                         liner-repairs)
 assets/site.css         Shared stylesheet for every page
 images/                 All photos + logos + favicons
 sitemap.xml             Listed URLs for search engines
 robots.txt              Points crawlers at the sitemap
-_redirects              Netlify redirects (/chemical-delivery, /liner-repairs)
+_redirects              Netlify redirects (old /chemical-delivery -> /liner-installation)
 netlify.toml            Deploy + cache config
 _build/gen.py           Page generator (see below)
 ```
-
-## Turning on reviews
-
-Near the top of `_build/gen.py` there is a config block. Fill it in and
-regenerate — until then, nothing review-related renders (no placeholder
-content ships):
-
-```python
-GOOGLE_PROFILE_URL  = "https://g.page/r/..."   # your "write a review" link
-GOOGLE_RATING       = 4.9
-GOOGLE_REVIEW_COUNT = 27
-REVIEWS = [
-    dict(name="Jane D.", location="Trussville", service="Weekly Pool Cleaning",
-         text="Real text copied from an actual Google review."),
-    ...
-]
-```
-
-Setting these activates: the hero rating badge, a reviews section on the
-homepage + each service page, the `/reviews/` page, footer link, sitemap
-entry, and `AggregateRating` + `Review` schema. Use **real** reviews only.
 
 ## Making changes
 

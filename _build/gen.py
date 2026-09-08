@@ -40,99 +40,6 @@ TEL = '2058106288'
 EMAIL = 'contact@alabamaaquatics.com'
 FB = 'https://www.facebook.com/profile.php?id=61574288617629'
 IG = 'https://www.instagram.com/alabamaaquatics/'
-SMS = TEL  # texting number
-
-# ─────────────────────────────────────────────────────────────────────────────
-# EDIT THESE to switch on the reviews / rating features.
-# While REVIEWS is empty and GOOGLE_RATING is None, nothing review-related
-# renders (no fake content ships) — the rest of the site is unaffected.
-# ─────────────────────────────────────────────────────────────────────────────
-FOUNDED_YEAR       = 2025
-HOURS              = "Monday – Saturday, 8 AM – 6 PM"   # TODO: confirm real hours
-GOOGLE_PROFILE_URL = ""      # paste your Google "write a review" / profile link
-GOOGLE_RATING      = None    # e.g. 4.9
-GOOGLE_REVIEW_COUNT = None   # e.g. 27
-REVIEWS = [
-    # Each: dict(name=, location=, service=, text=)  -- real Google reviews only.
-    # e.g. dict(name="Jane D.", location="Trussville", service="Weekly Pool Cleaning",
-    #           text="They show up every week like clockwork and the pool has never looked better."),
-]
-
-REVIEWS_ON = bool(REVIEWS)
-RATING_ON  = GOOGLE_RATING is not None and GOOGLE_REVIEW_COUNT is not None
-
-
-def stars_svg(rating):
-    """Row of 5 stars, filled to `rating` (halves rounded to nearest)."""
-    full = int(round(float(rating)))
-    out = []
-    for i in range(5):
-        fill = "#f5b301" if i < full else "none"
-        out.append(f'<svg viewBox="0 0 24 24" fill="{fill}" stroke="#f5b301" stroke-width="1.5" aria-hidden="true"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9"/></svg>')
-    return f'<span class="rating-stars">{"".join(out)}</span>'
-
-
-def rating_badge():
-    if not RATING_ON:
-        return ""
-    href = GOOGLE_PROFILE_URL or "#"
-    return (f'<a class="rating-badge" href="{href}" target="_blank" rel="noopener noreferrer">'
-            f'{stars_svg(GOOGLE_RATING)}'
-            f'<span><strong>{GOOGLE_RATING}</strong> &middot; {GOOGLE_REVIEW_COUNT} Google reviews</span></a>')
-
-
-def review_card(r):
-    loc = f' &middot; {r["location"]}' if r.get("location") else ""
-    svc = f'<span class="review-svc">{r["service"]}</span>' if r.get("service") else ""
-    return (f'    <figure class="review-card">\n'
-            f'      {stars_svg(GOOGLE_RATING or 5)}\n'
-            f'      <blockquote>{r["text"]}</blockquote>\n'
-            f'      <figcaption>&mdash; {r["name"]}{loc}</figcaption>\n'
-            f'      {svc}\n'
-            f'    </figure>')
-
-
-def reviews_section(service=None, limit=3):
-    if not REVIEWS_ON:
-        return ""
-    picked = [r for r in REVIEWS if r.get("service") == service] if service else []
-    if len(picked) < limit:
-        picked += [r for r in REVIEWS if r not in picked]
-    picked = picked[:limit]
-    head_line = ""
-    if RATING_ON:
-        href = GOOGLE_PROFILE_URL or "#"
-        head_line = (f'  <a class="reviews-rating" href="{href}" target="_blank" rel="noopener noreferrer">'
-                     f'{stars_svg(GOOGLE_RATING)} <span><strong>{GOOGLE_RATING}</strong> from {GOOGLE_REVIEW_COUNT} Google reviews</span></a>')
-    more = f'  <a class="reviews-more" href="/reviews/">Read more reviews</a>' if len(REVIEWS) > limit else ''
-    return f"""<section class="reviews">
-  <h2>What Our Customers Say</h2>
-  <div class="section-sub">Real Reviews</div>
-{head_line}
-  <div class="reviews-grid">
-{chr(10).join(review_card(r) for r in picked)}
-  </div>
-{more}
-</section>
-"""
-
-
-def review_jsonld():
-    """AggregateRating + Review array — only when we have a real rating AND reviews."""
-    if not (RATING_ON and REVIEWS_ON):
-        return ""
-    revs = ",\n".join(
-        '    { "@type": "Review", "author": { "@type": "Person", "name": "%s" }, '
-        '"reviewRating": { "@type": "Rating", "ratingValue": "%s", "bestRating": "5" }, '
-        '"reviewBody": %s }' % (r["name"], GOOGLE_RATING, _json_str(r["text"]))
-        for r in REVIEWS[:8]
-    )
-    return (',\n  "aggregateRating": { "@type": "AggregateRating", "ratingValue": "%s", "reviewCount": "%s" },\n'
-            '  "review": [\n%s\n  ]' % (GOOGLE_RATING, GOOGLE_REVIEW_COUNT, revs))
-
-
-def _json_str(s):
-    return '"' + s.replace('\\', '\\\\').replace('"', '\\"').replace('&mdash;', '—').replace('&amp;', '&') + '"'
 
 # ----------------------------------------------------------------------------
 # service order (drives cards, other-services, sitemap, footer nav)
@@ -243,17 +150,11 @@ def header():
 
 def footer():
     links = ''.join(f'<a href="/{s}/">{NAVLABEL[s]}</a>\n      ' for s in ORDER)
-    pages = '<a href="/service-area/">Service Area</a>\n      <a href="/gallery/">Before &amp; After</a>\n      <a href="/faq/">FAQ</a>\n      <a href="/contact/">Contact</a>'
-    if REVIEWS_ON or GOOGLE_PROFILE_URL:
-        pages += '\n      <a href="/reviews/">Reviews</a>'
     return f"""<footer>
   <a class="footer-logo" href="/"><img src="/images/logo-nav.png" alt="Alabama Aquatics" width="102" height="44"></a>
   <p>&copy; 2026 Alabama Aquatics LLC &nbsp;&bull;&nbsp; Birmingham, Alabama &nbsp;&bull;&nbsp; {PHONE}</p>
   <nav class="footer-nav" aria-label="Services">
       {links}
-  </nav>
-  <nav class="footer-nav footer-nav-pages" aria-label="More">
-      {pages}
   </nav>
   <div class="footer-social">
     <a href="{FB}" target="_blank" rel="noopener noreferrer">
@@ -270,86 +171,6 @@ def footer():
     </a>
   </div>
 </footer>
-"""
-
-
-def sticky_bar(quote_href="#quote"):
-    return f"""<div class="sticky-bar">
-  <a href="tel:{TEL}" aria-label="Call Alabama Aquatics">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1 .37 1.96.72 2.88a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.11-.45c.92.35 1.88.59 2.88.72A2 2 0 0 1 22 16.92z"/></svg>
-    <span>Call</span>
-  </a>
-  <a href="sms:{SMS}" aria-label="Text Alabama Aquatics">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <span>Text</span>
-  </a>
-  <a href="{quote_href}" class="sticky-quote" aria-label="Request a quote">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    <span>Free Quote</span>
-  </a>
-</div>
-"""
-
-
-def page_tail(quote_href="#quote", with_form_js=True):
-    return footer() + sticky_bar(quote_href) + (FORM_JS if with_form_js else "") + "\n</body>\n</html>\n"
-
-
-# ── credentials band (homepage) ──────────────────────────────────────────────
-def credentials_band():
-    items = [
-        ("Licensed &amp; Insured", "Full liability coverage on every visit"),
-        ("Locally Owned &amp; Operated", "Birmingham &amp; St. Clair County"),
-        (f"Serving Since {FOUNDED_YEAR}", "Alabama Aquatics LLC"),
-        ("Free Quotes", "Weekly or one-time"),
-    ]
-    cells = "\n".join(
-        f'    <div class="cred-item"><strong>{t}</strong><span>{s}</span></div>'
-        for t, s in items)
-    return f"""<section class="credentials" aria-label="Why trust Alabama Aquatics">
-  <div class="credentials-inner">
-{cells}
-  </div>
-</section>
-"""
-
-
-# ── home / contact quote form ────────────────────────────────────────────────
-SERVICE_OPTS = "\n".join(
-    f'          <option value="{NAVLABEL[s]}">{NAVLABEL[s]}</option>' for s in ORDER)
-
-def quote_form(form_name, heading, intro, submit="Get My Free Quote", hidden=None):
-    hid = "".join(f'\n        <input type="hidden" name="{k}" value="{v}">' for k, v in (hidden or {}).items())
-    return f"""<section class="quote-form-wrap" id="quote">
-  <div class="quote-form-inner">
-      <h2>{heading}</h2>
-      <p>{intro}</p>
-      <form class="qform" name="{form_name}" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event, '{form_name}')">
-        <input type="hidden" name="form-name" value="{form_name}">{hid}
-        <p class="hp-field"><label>Leave this field empty: <input name="bot-field"></label></p>
-        <input type="text" name="name" placeholder="Full Name" required autocomplete="name">
-        <input type="tel" name="phone" placeholder="Phone Number" required autocomplete="tel">
-        <input type="email" name="email" placeholder="Email (optional)" autocomplete="email">
-        <input type="text" name="address" placeholder="Property Address or City" required autocomplete="street-address">
-        <select name="service" class="qform-full" aria-label="What do you need?">
-          <option value="">What do you need? (optional)</option>
-{SERVICE_OPTS}
-          <option value="Not sure">Not sure &mdash; help me figure it out</option>
-        </select>
-        <textarea name="notes" placeholder="Tell us about your pool (size, condition, anything else)" class="qform-full"></textarea>
-        <div class="qform-radio-group">
-          <div class="radio-label">Best way to reach you:</div>
-          <div class="qform-radio-opts">
-          <label class="qform-radio-opt"><input type="radio" name="contact" value="Call"> Call</label>
-          <label class="qform-radio-opt"><input type="radio" name="contact" value="Text"> Text</label>
-          <label class="qform-radio-opt"><input type="radio" name="contact" value="Email"> Email</label>
-          </div>
-        </div>
-        <button type="submit" class="qform-submit">{submit}</button>
-      </form>
-      <div class="form-success" id="success-{form_name}">Thanks! We&apos;ll get back to you shortly &mdash; usually same day.</div>
-  </div>
-</section>
 """
 
 FORM_JS = """<script>
@@ -370,242 +191,6 @@ function handleSubmit(event, formName) {
   });
 }
 </script>""" % TEL
-
-# ===========================================================================
-# PHASE 2 — how it works, FAQ, pricing, gallery, service-area / town pages
-# ===========================================================================
-
-# Flip SHOW_PRICING to True once the number is OK to publish.
-SHOW_PRICING       = False
-WEEKLY_PRICE       = 340   # $/month, standard weekly service (4 visits)
-WEEKLY_VISIT_PRICE = 85
-
-# ---- How it works -------------------------------------------------------------
-def how_it_works():
-    steps = [
-        ("1", "Get a free quote", "Call, text, or send the form. Tell us about your pool and where you are &mdash; we&apos;ll come back to you the same day with pricing."),
-        ("2", "We schedule your first visit", "Pick weekly service or a one-time clean. No long-term contract to get started, and no surprise charges."),
-        ("3", "We handle it from there", "We show up on the same day every week &mdash; skim, brush, vacuum, balance the water, check the equipment &mdash; and flag anything that needs attention."),
-    ]
-    cells = "\n".join(
-        f'    <div class="step"><span class="step-num">{n}</span><h3>{t}</h3><p>{d}</p></div>'
-        for n, t, d in steps)
-    return f"""<section class="how">
-  <h2>How It Works</h2>
-  <div class="section-sub">Getting Started Is Easy</div>
-  <div class="how-grid">
-{cells}
-  </div>
-</section>
-"""
-
-# ---- FAQ --------------------------------------------------------------------
-FAQ_HOME = [
-    ("Do I have to sign a long-term contract?",
-     "No. Weekly service is a simple recurring agreement you can pause or cancel &mdash; we earn your business every week. We also do one-time cleanings and green-to-clean jobs with no commitment."),
-    ("How much does weekly pool service cost?",
-     "Most standard residential pools run about the same each month for weekly service, with chemicals included. Add-ons like specialty treatments or extra visits are billed as clear line items on the same monthly invoice. Send the form or call for an exact quote for your pool."),
-    ("What&apos;s included in a weekly visit?",
-     "Every visit: empty skimmer and pump baskets, brush walls, steps and tile line, skim and vacuum, test and balance the water, adjust chemical feeders, and inspect the pump, filter and plumbing. Standard chemicals are included."),
-    ("How long does green-to-clean take?",
-     "Most green pools clear up in about a week. We visit roughly three times that week, treating and vacuuming each time until the water is clear and swim-ready. Chemicals and vacuuming are included &mdash; no hidden charges for the work it takes."),
-    ("Do you service above-ground pools?",
-     "We focus on in-ground pools &mdash; liner, plaster and fiberglass. If you have an above-ground pool, give us a call and we&apos;ll point you in the right direction."),
-    ("What areas do you serve?",
-     "Greater Birmingham and St. Clair County &mdash; including Trussville, Springville, Odenville, Moody, Argo, Leeds, Pell City, Hoover, Vestavia Hills, Mountain Brook and Chelsea. Not sure if you&apos;re in range? Just ask."),
-    ("Do I need to be home for service?",
-     "No. As long as we can get to the equipment and the pool, we&apos;ll take care of everything and let you know if anything needs your attention."),
-    ("Do you handle repairs and liner work too?",
-     "Yes &mdash; pumps, filters, heaters, salt cells, chlorinators, full equipment installs, leak detection, underwater liner patching, and full vinyl liner replacement. Weekly service customers get priority scheduling."),
-]
-
-SERVICE_FAQ = {
- 'pool-cleaning': [
-    ("How often do you come?", "Once a week, on the same day, for standard weekly service. We can also set up bi-weekly or one-time visits."),
-    ("Are chemicals included?", "Yes &mdash; standard sanitizer and balancing chemicals are included in weekly service. Specialty products are billed as line items so you always see what you paid for."),
-    ("Do I need to be home?", "No. We just need access to the pool and equipment."),
- ],
- 'pool-openings': [
-    ("When should I open my pool?", "Most Alabama pools open in April or early May, once nighttime temps are consistently above the 60s. We can open earlier if you heat your pool."),
-    ("My pool is green &mdash; is that extra?", "Green-to-clean is handled under our service agreement with chemicals and vacuuming included. If it needs more visits than expected we&apos;ll tell you, but there are no hidden charges."),
- ],
- 'chemical-balancing': [
-    ("Can you balance my water without full cleaning service?", "Yes. Our standalone chemical-check service keeps your water dialed in on a regular schedule &mdash; popular for covered pools in the off-season."),
-    ("What do you test for?", "Free chlorine, pH, total alkalinity, calcium hardness, cyanuric acid, salt (for saltwater pools) and phosphates."),
- ],
- 'liner-installation': [
-    ("How long does a liner last?", "Usually 7 to 12 years. Fading, wrinkles, leaks at the seams or a bead that won&apos;t stay in the track are signs it&apos;s time."),
-    ("Do you drain the pool?", "Yes, a full liner replacement requires draining. We remove the old liner, prep the floor and walls, fit and vacuum-set the new liner, cut in the fittings and refill."),
-    ("Can I pick the pattern?", "Yes. You choose from current liner patterns before we order."),
- ],
- 'spa-service': [
-    ("Is spa service contract-only?", "Yes &mdash; spas need consistent weekly attention to stay clean and safe, so we offer it as a recurring maintenance agreement."),
-    ("Chlorine or bromine?", "Either. We handle both, plus specialty spa chemicals like enzymes and clarifiers."),
- ],
- 'filter-maintenance': [
-    ("How often should a cartridge filter be cleaned?", "Every 4 to 6 months for most pools. We can put you on a schedule so it never gets missed."),
-    ("How often do sand filters need new sand?", "Every 3 to 5 years. We handle the full change &mdash; drain, remove old sand, replace media, restart the system."),
- ],
- 'equipment-repair': [
-    ("What brands do you work on?", "All major brands &mdash; Hayward, Pentair and Jandy &mdash; for pumps, filters, heaters, salt cells and chlorinators."),
-    ("Will you tell me the cost before you start?", "Yes. We diagnose the problem and walk you through what it needs before any work begins. No surprises."),
- ],
- 'pressure-washing': [
-    ("What surfaces do you clean?", "Pool decks, driveways, sidewalks, pavers, brick and natural stone, plus soft-wash for home exteriors. We tailor the pressure and solution to the material."),
-    ("Do you pressure wash wood or vehicles?", "No &mdash; we don&apos;t service wood fences, wood decks or vehicles."),
- ],
- 'pool-closings': [
-    ("Do I have to close my pool for winter?", "Not necessarily. We recommend covering it and keeping equipment running to save on spring opening costs, but we&apos;ll winterize and dewinterize if you prefer."),
-    ("I don&apos;t have a cover.", "We can supply one and install it as part of the closing."),
- ],
- 'leak-detection': [
-    ("How do I know if my pool is leaking?", "If you&apos;re losing more than about a quarter-inch a day, or adding water constantly, you likely have a leak."),
-    ("Do you have to drain the pool to patch it?", "No. We locate the leak and patch the liner underwater with professional-grade vinyl patch material &mdash; usually in one visit."),
- ],
-}
-
-def faq_jsonld(items):
-    if not items:
-        return ""
-    q = ",\n".join(
-        '    { "@type": "Question", "name": %s, "acceptedAnswer": { "@type": "Answer", "text": %s } }'
-        % (_json_str(_h.unescape(qq).replace('&apos;', "'")), _json_str(_h.unescape(aa).replace('&apos;', "'").replace('&mdash;','—')))
-        for qq, aa in items)
-    return f"""<script type="application/ld+json">
-{{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-{q}
-  ]
-}}
-</script>"""
-
-def faq_block(items, heading="Frequently Asked Questions"):
-    if not items:
-        return ""
-    rows = "\n".join(
-        f'    <details class="faq-item"><summary>{qq}</summary><div>{aa}</div></details>'
-        for qq, aa in items)
-    return f"""<section class="faq">
-  <h2>{heading}</h2>
-  <div class="faq-list">
-{rows}
-  </div>
-</section>
-"""
-
-# ---- Pricing --------------------------------------------------------------
-def pricing_section():
-    price = ""
-    if SHOW_PRICING:
-        price = f"""    <div class="price-figure">
-      <span class="price-amt">${WEEKLY_PRICE}<span>/mo</span></span>
-      <span class="price-note">Standard weekly service &mdash; 4 visits, chemicals included. Larger pools and add-ons quoted individually.</span>
-    </div>
-"""
-    return f"""<section class="pricing">
-  <h2>Straightforward Pricing</h2>
-  <div class="section-sub">No Surprises</div>
-{price}  <div class="pricing-points">
-    <div><strong>One flat monthly rate</strong><span>Weekly service is billed once a month, with standard chemicals included.</span></div>
-    <div><strong>Add-ons are line items</strong><span>Specialty chemicals or an extra visit show up itemized on the same invoice &mdash; you always see what you paid for.</span></div>
-    <div><strong>No long-term contract</strong><span>Weekly service is month-to-month. One-time cleanings and green-to-clean have no commitment at all.</span></div>
-  </div>
-  <a class="btn-primary" href="/#quote">Get Your Exact Price</a>
-</section>
-"""
-
-# ---- Before / After gallery --------------------------------------------------
-GALLERY = [
-    ("emilysbefore.jpg", "emilysafter.jpg", "Green to Clean", "A neglected pool brought back to crystal clear with our green-to-clean process."),
-    ("donnasbefore.jpg", "donnasafter.jpg", "Green to Clean", "Same pool, one week apart &mdash; from swamp to swim-ready."),
-]
-GALLERY_SINGLES = [
-    ("scottandginaperfect.jpg", "Weekly Service Results", "A weekly-service pool kept dialed in all season."),
-    ("pooldeckclean.jpg", "Pressure Washing", "Pool deck before and after a pressure wash."),
-    ("housewash.jpg", "Soft Wash", "House exterior soft-washed &mdash; no high pressure on siding."),
-]
-
-def gallery_strip():
-    b, a, label, _ = GALLERY[0]
-    b2, a2, label2, _ = GALLERY[1]
-    return f"""<section class="gallery-strip">
-  <h2>Real Pools, Real Results</h2>
-  <div class="section-sub">Before &amp; After</div>
-  <div class="ba-grid">
-    <figure class="ba"><img src="/images/{b}" alt="Green pool before service" loading="lazy"><figcaption>Before</figcaption></figure>
-    <figure class="ba"><img src="/images/{a}" alt="Clear pool after service" loading="lazy"><figcaption>After</figcaption></figure>
-    <figure class="ba"><img src="/images/{b2}" alt="Green pool before service" loading="lazy"><figcaption>Before</figcaption></figure>
-    <figure class="ba"><img src="/images/{a2}" alt="Clear pool after service" loading="lazy"><figcaption>After</figcaption></figure>
-  </div>
-  <a class="reviews-more" href="/gallery/">See more before &amp; afters</a>
-</section>
-"""
-
-# ---- Service-area / towns ---------------------------------------------------
-TOWNS = [
- ("trussville", "Trussville", "Jefferson &amp; St. Clair County",
-  "Trussville sits right between our St. Clair County home base and Birmingham, so it&apos;s one of the first places we serve. Whether you&apos;re near the Mall, in Cahaba Project, or out toward the Pinchgut Creek side, we keep Trussville pools clean and balanced every week."),
- ("springville", "Springville", "St. Clair County",
-  "Springville is home turf. We know the well water, the tree cover along US-11, and how quickly a pool here can turn green after a storm. Weekly service, openings, and green-to-clean throughout Springville and out toward Big Canoe Creek."),
- ("odenville", "Odenville", "St. Clair County",
-  "Odenville and the St. Clair-Springville corridor are core to our route. Rural lots, lots of shade, and pools that need consistent attention &mdash; exactly what our weekly service is built for."),
- ("moody", "Moody", "St. Clair County",
-  "We serve pools all over Moody, from the neighborhoods off Kerr Road to the properties near Moody Crossroads. Weekly cleaning, chemical balancing, equipment repair and liner work, close to home for us."),
- ("argo", "Argo", "St. Clair &amp; Jefferson County",
-  "Argo straddles the county line just north of Trussville, and it&apos;s a quick stop on our regular route. Weekly pool service, openings and repairs for Argo homeowners."),
- ("leeds", "Leeds", "Jefferson &amp; St. Clair County",
-  "From the neighborhoods near the Interstate to the quieter streets toward Moody, we keep Leeds pools swim-ready. Weekly service, green-to-clean, pressure washing and full repair work."),
- ("pell-city", "Pell City", "St. Clair County",
-  "Pell City and the Logan Martin Lake area have a lot of pools working hard through a long Alabama summer. We handle weekly service, openings and closings, equipment repair and liner replacement across Pell City."),
- ("ashville", "Ashville", "St. Clair County",
-  "Ashville is our county seat and part of our regular service area. If you&apos;re keeping a pool up here, we can keep it clean, balanced and running right, every week."),
- ("hoover", "Hoover", "Jefferson &amp; Shelby County",
-  "Hoover has one of the highest concentrations of backyard pools in the metro. We provide weekly service, chemical balancing, equipment repair and pressure washing throughout Hoover, from Bluff Park to Ross Bridge to Trace Crossings."),
- ("vestavia-hills", "Vestavia Hills", "Jefferson County",
-  "Vestavia Hills pools tend to be established, mature, and surrounded by trees &mdash; which means consistent skimming, brushing and chemistry really matter. That&apos;s our weekly service in a nutshell."),
- ("mountain-brook", "Mountain Brook", "Jefferson County",
-  "Mountain Brook pools deserve a service that shows up on schedule and treats the property with care. We provide weekly maintenance, repairs, liner work and pressure washing across Mountain Brook, Crestline, and English Village."),
- ("chelsea", "Chelsea", "Shelby County",
-  "Chelsea has grown fast and so has the number of pools out here. We serve the neighborhoods along Highway 280 and Chelsea Road with weekly service, openings, and full repair work."),
- ("pinson", "Pinson", "Jefferson County",
-  "Pinson and Clay are a short hop from our route through Trussville. Weekly pool cleaning, green-to-clean, and equipment repair for the Pinson Valley area."),
- ("clay", "Clay", "Jefferson County",
-  "We serve Clay pools alongside our Trussville and Pinson customers &mdash; weekly service, chemical balancing, openings and closings, and repairs."),
-]
-
-def town_jsonld(name, county, url):
-    return f"""<script type="application/ld+json">
-{{
-  "@context": "https://schema.org",
-  "@type": "Service",
-  "serviceType": "Swimming Pool Cleaning and Maintenance",
-  "name": "Pool Service in {name}, AL &ndash; Alabama Aquatics",
-  "url": "{url}",
-  "areaServed": {{ "@type": "City", "name": "{name}", "containedInPlace": {{ "@type": "AdministrativeArea", "name": "{_h.unescape(county)}, Alabama" }} }},
-  "provider": {{
-    "@type": "LocalBusiness", "name": "Alabama Aquatics LLC",
-    "telephone": "+1-205-810-6288", "email": "{EMAIL}", "url": "{BASE}/",
-    "image": "{BASE}/images/logo-badge-512.png",
-    "address": {{ "@type": "PostalAddress", "addressRegion": "AL", "addressCountry": "US" }},
-    "sameAs": ["{FB}", "{IG}"]
-  }}
-}}
-</script>"""
-
-def service_area_section():
-    links = "\n".join(
-        f'    <a href="/pool-service-{slug}/">{name}</a>' for slug, name, _c, _b in TOWNS)
-    return f"""<section class="service-area">
-  <h2>Where We Work</h2>
-  <div class="section-sub">Greater Birmingham &amp; St. Clair County</div>
-  <div class="area-grid">
-{links}
-  </div>
-  <a class="reviews-more" href="/service-area/">See our full service area</a>
-</section>
-"""
 
 # ----------------------------------------------------------------------------
 # form field helpers
@@ -995,9 +580,7 @@ def service_jsonld(slug, d):
 def build_service_page(slug):
     d = S[slug]
     url = f"{BASE}/{slug}/"
-    faqs = SERVICE_FAQ.get(slug, [])
-    doc = head(d['title'], d['desc'].replace('&amp;','&'), url,
-               extra=service_jsonld(slug, d) + faq_jsonld(faqs))
+    doc = head(d['title'], d['desc'].replace('&amp;','&'), url, extra=service_jsonld(slug, d))
     doc += header()
     doc += f"""<main id="main">
   <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -1013,13 +596,12 @@ def build_service_page(slug):
 {d['body']}
   </article>
   {d['form']}
-  {faq_block(faqs)}
-  {reviews_section(NAVLABEL[slug])}
   {other_services(slug)}
   {CTA}
 </main>
 """
-    doc += page_tail(quote_href="#quote")
+    doc += footer()
+    doc += FORM_JS + "\n</body>\n</html>\n"
     doc = add_asset_versions(doc)
     folder = os.path.join(OUT, slug)
     os.makedirs(folder, exist_ok=True)
@@ -1074,7 +656,7 @@ HOME_JSONLD = f"""<script type="application/ld+json">
       for s in ORDER
 ) + """
     ]
-  }""" + review_jsonld() + """
+  }
 }
 </script>"""
 
@@ -1082,10 +664,11 @@ home = head(
   "Alabama Aquatics | Professional Pool Service",
   "Professional pool service, cleaning, chemical balancing, equipment repair and pressure washing for the Greater Birmingham, Alabama area. Licensed, insured, and built on integrity.",
   f"{BASE}/",
-  extra=HOME_JSONLD + faq_jsonld(FAQ_HOME),
+  extra=HOME_JSONLD,
 )
 home += header()
 home += f"""<main id="main">
+<h1 class="visually-hidden">Alabama Aquatics &mdash; Professional Pool Service, Repair &amp; Pressure Washing in Greater Birmingham, Alabama</h1>
 <section class="hero">
   <div class="hero-bubbles" aria-hidden="true">
     <div class="bubble" style="width:190px;height:190px;bottom:-55px;left:-35px;"></div>
@@ -1096,20 +679,13 @@ home += f"""<main id="main">
     <div class="bubble" style="width:20px;height:20px;top:60%;right:21%;"></div>
     <div class="bubble" style="width:40px;height:40px;bottom:14%;left:26%;"></div>
   </div>
-  <div class="hero-sub">Weekly Pool Service &bull; Greater Birmingham &amp; St. Clair County</div>
-  <img class="hero-logo" src="/images/logo-hero.png" alt="Alabama Aquatics" width="440" height="201">
-  <h1>Owning the Pool Should Be the Fun Part</h1>
-  <p class="hero-lede">We handle the cleaning, chemical balancing, repairs, liner work and pressure washing &mdash; weekly or one-time &mdash; for homeowners across Greater Birmingham and St.&nbsp;Clair County. Licensed, insured, and locally owned.</p>
-  <div class="hero-cta-row">
-    <a class="btn-primary" href="#quote">Get a Free Quote</a>
-    <a class="btn-secondary" href="tel:{TEL}">Call {PHONE}</a>
-  </div>
-  {rating_badge()}
+  <div class="hero-sub">Professional Pool Service</div>
+  <img class="hero-logo" src="/images/logo-hero.png" alt="Alabama Aquatics" width="460" height="220">
+  <div class="divider"><div class="dl"></div><div class="dd"></div><div class="dl"></div></div>
+  <p>Professional pool service and pressure washing for the Greater Birmingham area. Licensed, insured, and built on integrity.</p>
+  <a class="hero-btn" href="tel:{TEL}">Call Us Today &mdash; {PHONE}</a>
+  <img class="hero-badge" src="/images/badge.png" alt="" width="100" height="100">
 </section>
-
-{credentials_band()}
-
-{quote_form('home-quote', 'Get a Free Quote', 'Tell us a little about your pool and we&apos;ll get right back to you &mdash; usually the same day.')}
 
 <section class="services">
   <h2>Our Services</h2>
@@ -1120,16 +696,6 @@ home += f"""<main id="main">
 
   </div>
 </section>
-
-{how_it_works()}
-
-{gallery_strip()}
-
-{reviews_section()}
-
-{pricing_section()}
-
-{service_area_section()}
 
 <section class="why">
   <h2>Why Choose Us</h2>
@@ -1158,8 +724,6 @@ home += f"""<main id="main">
   </div>
 </section>
 
-{faq_block(FAQ_HOME, "Common Questions")}
-
 <section class="cta">
   <h2>Ready for a Cleaner Pool?</h2>
   <p>Serving Greater Birmingham &mdash; St. Clair, Jefferson &amp; Shelby County</p>
@@ -1167,7 +731,8 @@ home += f"""<main id="main">
 </section>
 </main>
 """
-home += page_tail(quote_href="#quote")
+home += footer()
+home += "\n</body>\n</html>\n"
 home = add_asset_versions(home)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(home)
 print('wrote index.html', len(home))
@@ -1177,11 +742,7 @@ print('wrote index.html', len(home))
 # ----------------------------------------------------------------------------
 from datetime import date
 today = date.today().isoformat()
-urls = ([f"{BASE}/"] + [f"{BASE}/{s}/" for s in ORDER]
-        + [f"{BASE}/service-area/", f"{BASE}/faq/", f"{BASE}/gallery/", f"{BASE}/contact/"]
-        + [f"{BASE}/pool-service-{slug}/" for slug, _n, _c, _b in TOWNS])
-if REVIEWS or GOOGLE_PROFILE_URL:
-    urls.append(f"{BASE}/reviews/")
+urls = [f"{BASE}/"] + [f"{BASE}/{s}/" for s in ORDER]
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 for u in urls:
     pr = '1.0' if u.endswith('/') and u.count('/') == 3 else '0.8'
@@ -1216,219 +777,8 @@ nf += f"""<main id="main">
   {other_services('')}
 </main>
 """
-nf += page_tail(quote_href="/#quote", with_form_js=False)
+nf += footer() + "\n</body>\n</html>\n"
 open(os.path.join(OUT, '404.html'), 'w', encoding='utf-8').write(add_asset_versions(nf))
 
-# ----------------------------------------------------------------------------
-# /contact/  and  /reviews/
-# ----------------------------------------------------------------------------
-def _write(rel_dir, doc):
-    d = os.path.join(OUT, rel_dir)
-    os.makedirs(d, exist_ok=True)
-    open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(add_asset_versions(doc))
-    print('wrote', rel_dir + '/index.html', len(doc))
-
-# ---- Contact ----
-c = head("Contact Alabama Aquatics | Pool Service in Greater Birmingham, AL",
-         "Contact Alabama Aquatics for pool cleaning, repairs, liner work and pressure washing in Greater Birmingham and St. Clair County. Call, text, or request a free quote.",
-         f"{BASE}/contact/")
-c += header()
-c += f"""<main id="main">
-  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <span>Contact</span></nav>
-  <header class="service-hero">
-    <p class="eyebrow">Get In Touch</p>
-    <h1>Contact Alabama Aquatics</h1>
-    <p class="lede">Call or text for the fastest response, or send the form below and we&apos;ll get right back to you &mdash; usually the same day.</p>
-  </header>
-  <section class="contact-cols">
-    <div class="contact-details">
-      <h2>Reach Us</h2>
-      <ul class="contact-list">
-        <li><span class="cl-label">Phone</span><a href="tel:{TEL}">{PHONE}</a></li>
-        <li><span class="cl-label">Text</span><a href="sms:{SMS}">{PHONE}</a></li>
-        <li><span class="cl-label">Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></li>
-        <li><span class="cl-label">Hours</span><span>{HOURS}</span></li>
-        <li><span class="cl-label">Area</span><span>Greater Birmingham &mdash; St. Clair, Jefferson &amp; Shelby County (Trussville, Springville, Odenville, Moody, Leeds, Hoover, Vestavia Hills, Mountain Brook and nearby)</span></li>
-      </ul>
-      <div class="contact-social">
-        <a href="{FB}" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a href="{IG}" target="_blank" rel="noopener noreferrer">Instagram</a>
-      </div>
-    </div>
-    <div class="contact-form-col">
-      {quote_form('contact', 'Request a Free Quote', 'Every pool is different. Give us the basics and we&apos;ll follow up with next steps.', submit='Send')}
-    </div>
-  </section>
-  {reviews_section()}
-  {CTA}
-</main>
-"""
-c += page_tail(quote_href="#quote")
-_write('contact', c)
-
-# ---- Reviews (only if there is something real to show) ----
-if REVIEWS_ON or GOOGLE_PROFILE_URL:
-    rv = head("Customer Reviews | Alabama Aquatics Pool Service",
-              "Reviews from Alabama Aquatics pool service customers across Greater Birmingham and St. Clair County.",
-              f"{BASE}/reviews/",
-              extra=(f'<script type="application/ld+json">\n{{\n  "@context":"https://schema.org","@type":"LocalBusiness","name":"Alabama Aquatics LLC","url":"{BASE}/"'
-                     + review_jsonld() + '\n}\n</script>' if (RATING_ON and REVIEWS_ON) else ''))
-    rv += header()
-    summary = ""
-    if RATING_ON:
-        href = GOOGLE_PROFILE_URL or "#"
-        summary = f'<a class="reviews-rating" href="{href}" target="_blank" rel="noopener noreferrer">{stars_svg(GOOGLE_RATING)} <span><strong>{GOOGLE_RATING}</strong> from {GOOGLE_REVIEW_COUNT} Google reviews</span></a>'
-    cards = "\n".join(review_card(r) for r in REVIEWS) if REVIEWS_ON else '  <p style="text-align:center;color:var(--slate);">Reviews are on the way &mdash; be our first!</p>'
-    leave = f'<a class="btn-primary" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener noreferrer">Leave Us a Review on Google</a>' if GOOGLE_PROFILE_URL else ''
-    rv += f"""<main id="main">
-  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <span>Reviews</span></nav>
-  <header class="service-hero">
-    <p class="eyebrow">Customer Reviews</p>
-    <h1>What Our Customers Say</h1>
-    {summary}
-  </header>
-  <section class="reviews reviews-page">
-    <div class="reviews-grid">
-{cards}
-    </div>
-    <div style="text-align:center;margin-top:2.5rem;">{leave}</div>
-  </section>
-  {CTA}
-</main>
-"""
-    rv += page_tail(quote_href="/#quote", with_form_js=False)
-    _write('reviews', rv)
-
-# ---- FAQ page ----
-fq_extra = faq_jsonld(FAQ_HOME + [q for lst in SERVICE_FAQ.values() for q in lst][:6])
-f = head("Pool Service FAQ | Alabama Aquatics",
-         "Answers to common questions about pool cleaning, pricing, contracts, green-to-clean, liner work and service areas in Greater Birmingham and St. Clair County.",
-         f"{BASE}/faq/", extra=fq_extra)
-f += header()
-f += f"""<main id="main">
-  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <span>FAQ</span></nav>
-  <header class="service-hero">
-    <p class="eyebrow">Good Questions</p>
-    <h1>Pool Service FAQ</h1>
-    <p class="lede">The things people ask us most. Don&apos;t see your question? Call or text {PHONE} and we&apos;ll answer it straight.</p>
-  </header>
-  {faq_block(FAQ_HOME, "General")}
-  {faq_block([q for s in ('pool-cleaning','pool-openings','liner-installation','leak-detection','equipment-repair') for q in SERVICE_FAQ.get(s, [])], "By Service")}
-  {CTA}
-</main>
-"""
-f += page_tail(quote_href="/#quote", with_form_js=False)
-_write('faq', f)
-
-# ---- Gallery page ----
-def ba_pair(b, a, label, caption):
-    return f"""    <figure class="ba-card">
-      <div class="ba-pair">
-        <div><img src="/images/{b}" alt="{label} &ndash; before" loading="lazy"><span>Before</span></div>
-        <div><img src="/images/{a}" alt="{label} &ndash; after" loading="lazy"><span>After</span></div>
-      </div>
-      <figcaption><strong>{label}</strong> &mdash; {caption}</figcaption>
-    </figure>"""
-def ba_single(img, label, caption):
-    return f"""    <figure class="ba-card ba-single">
-      <img src="/images/{img}" alt="{label}" loading="lazy">
-      <figcaption><strong>{label}</strong> &mdash; {caption}</figcaption>
-    </figure>"""
-g = head("Before &amp; After Gallery | Alabama Aquatics Pool Service",
-         "Before and after photos of real pools serviced by Alabama Aquatics &mdash; green-to-clean transformations, weekly service results and pressure washing across Greater Birmingham.",
-         f"{BASE}/gallery/")
-g += header()
-g += f"""<main id="main">
-  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <span>Before &amp; After</span></nav>
-  <header class="service-hero">
-    <p class="eyebrow">Real Pools, Real Results</p>
-    <h1>Before &amp; After</h1>
-    <p class="lede">These are actual customer pools &mdash; no stock photos. Green-to-clean jobs, weekly-service results, and pressure washing around the property.</p>
-  </header>
-  <section class="gallery-page">
-{chr(10).join(ba_pair(*x) for x in GALLERY)}
-{chr(10).join(ba_single(*x) for x in GALLERY_SINGLES)}
-  </section>
-  {CTA}
-</main>
-"""
-g += page_tail(quote_href="/#quote", with_form_js=False)
-_write('gallery', g)
-
-# ---- Service Area hub ----
-sa_cards = "\n".join(
-    f'''    <a class="area-card" href="/pool-service-{slug}/">
-      <strong>{name}</strong><span>{county}</span>
-    </a>''' for slug, name, county, _b in TOWNS)
-sa = head("Pool Service Area | Greater Birmingham &amp; St. Clair County, AL | Alabama Aquatics",
-          "Alabama Aquatics provides weekly pool service, repairs and pressure washing across St. Clair County and Greater Birmingham &mdash; Trussville, Springville, Odenville, Moody, Hoover, Vestavia Hills and more.",
-          f"{BASE}/service-area/")
-sa += header()
-sa += f"""<main id="main">
-  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <span>Service Area</span></nav>
-  <header class="service-hero">
-    <p class="eyebrow">Where We Work</p>
-    <h1>Our Service Area</h1>
-    <p class="lede">We&apos;re based in St. Clair County and run regular routes across Greater Birmingham. If your town is on this list &mdash; or right next to one &mdash; we can help. Not sure? Just ask.</p>
-  </header>
-  <section class="area-hub">
-{sa_cards}
-  </section>
-  {CTA}
-</main>
-"""
-sa += page_tail(quote_href="/#quote", with_form_js=False)
-_write('service-area', sa)
-
-# ---- Town pages ----
-def build_town_page(slug, name, county, blurb):
-    url = f"{BASE}/pool-service-{slug}/"
-    svc_links = " &bull; ".join(
-        f'<a class="inline-link" href="/{s}/">{NAVLABEL[s]}</a>' for s in
-        ('pool-cleaning','pool-openings','chemical-balancing','equipment-repair','liner-installation','pressure-washing'))
-    t_faq = [
-        (f"Do you really serve {name}?",
-         f"Yes &mdash; {name} ({_h.unescape(county)}) is part of our regular route. We provide weekly pool service, one-time cleanings, green-to-clean, equipment repair and liner work here."),
-        ("How do I get started?",
-         f"Call or text {PHONE}, or send the form on this page. We&apos;ll give you a same-day quote for your {name} pool."),
-        ("Is there a contract?",
-         "No long-term contract for weekly service &mdash; it&apos;s month-to-month. One-time work has no commitment at all."),
-    ]
-    tform = quote_form('area-quote', f'Get a Free Quote in {name}',
-                       'Tell us about your pool and we&apos;ll get right back to you with pricing.',
-                       submit='Get My Free Quote', hidden={'area': name})
-    doc = head(
-        f"Pool Service in {name}, AL | Cleaning, Repairs &amp; More | Alabama Aquatics",
-        f"Weekly pool cleaning, chemical balancing, green-to-clean, equipment repair, liner installation and pressure washing in {name}, Alabama. Licensed, insured, locally owned. Free quotes.",
-        url, extra=town_jsonld(name, county, url) + faq_jsonld(t_faq))
-    doc += header()
-    doc += f"""<main id="main">
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href="/">Home</a> &nbsp;/&nbsp; <a href="/service-area/">Service Area</a> &nbsp;/&nbsp; <span>{name}</span>
-  </nav>
-  <header class="service-hero">
-    <p class="eyebrow">{_h.unescape(county)}</p>
-    <h1>Pool Service in {name}, Alabama</h1>
-    <p class="lede">{blurb}</p>
-    <a class="hero-cta" href="#quote">Get a Free {name} Quote</a>
-  </header>
-  <article class="service-content">
-    <h2>What We Do in {name}</h2>
-    <p>Alabama Aquatics provides full pool care for {name} homeowners: {svc_links}, plus <a class="inline-link" href="/spa-service/">spa service</a>, <a class="inline-link" href="/filter-maintenance/">filter maintenance</a>, <a class="inline-link" href="/pool-closings/">closings</a> and <a class="inline-link" href="/leak-detection/">leak detection</a>. Most customers are on weekly service &mdash; same day every week, chemicals included, no long-term contract.</p>
-    <p>We&apos;re licensed, insured and locally owned, and we treat your property like it&apos;s our own. If your {name} pool has gone green, we&apos;ll get it clear; if the equipment&apos;s down, we&apos;ll diagnose it before any work starts.</p>
-  </article>
-  {tform}
-  {faq_block(t_faq, f'{name} Pool Service &mdash; FAQ')}
-  {other_services(None)}
-  {CTA}
-</main>
-"""
-    doc += page_tail(quote_href="#quote")
-    _write(f'pool-service-{slug}', doc)
-
-for slug, name, county, blurb in TOWNS:
-    build_town_page(slug, name, county, blurb)
-
-print('wrote faq, gallery, service-area,', len(TOWNS), 'town pages')
 print('wrote sitemap.xml, robots.txt, _redirects, 404.html')
 print('DONE')
