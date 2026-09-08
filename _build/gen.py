@@ -13,6 +13,27 @@ try:
 except OSError:
     CSS_VER = '1'
 
+# append ?v=<content hash> to every local /images, /assets and /favicon.ico
+# reference so a changed file is never served from a stale browser cache
+import re as _re
+_ver_cache = {}
+def _file_ver(rel):
+    if rel not in _ver_cache:
+        try:
+            _ver_cache[rel] = hashlib.md5(
+                open(os.path.join(OUT, rel.lstrip('/')), 'rb').read()
+            ).hexdigest()[:8]
+        except OSError:
+            _ver_cache[rel] = None
+    return _ver_cache[rel]
+
+def add_asset_versions(html):
+    def repl(m):
+        attr, path = m.group(1), m.group(2)
+        v = _file_ver(path)
+        return f'{attr}="{path}?v={v}"' if v else m.group(0)
+    return _re.sub(r'(src|href)="((?:/(?:images|assets)/[^"?]+)|/favicon\.ico)"', repl, html)
+
 BASE = 'https://alabamaaquatics.com'
 PHONE = '205-810-6288'
 TEL = '2058106288'
@@ -581,6 +602,7 @@ def build_service_page(slug):
 """
     doc += footer()
     doc += FORM_JS + "\n</body>\n</html>\n"
+    doc = add_asset_versions(doc)
     folder = os.path.join(OUT, slug)
     os.makedirs(folder, exist_ok=True)
     open(os.path.join(folder, 'index.html'), 'w', encoding='utf-8').write(doc)
@@ -711,6 +733,7 @@ home += f"""<main id="main">
 """
 home += footer()
 home += "\n</body>\n</html>\n"
+home = add_asset_versions(home)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(home)
 print('wrote index.html', len(home))
 
@@ -755,7 +778,7 @@ nf += f"""<main id="main">
 </main>
 """
 nf += footer() + "\n</body>\n</html>\n"
-open(os.path.join(OUT, '404.html'), 'w', encoding='utf-8').write(nf)
+open(os.path.join(OUT, '404.html'), 'w', encoding='utf-8').write(add_asset_versions(nf))
 
 print('wrote sitemap.xml, robots.txt, _redirects, 404.html')
 print('DONE')
