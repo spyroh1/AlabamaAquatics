@@ -41,14 +41,14 @@ CARD = {
  'equipment-repair':('Equipment Repair &amp; Sales','Pumps, filters, heaters, salt cells &amp; full installs. All major brands.'),
  'pressure-washing':('Pressure Washing','Pool decks, driveways, sidewalks, brick, pavers and home exteriors.'),
  'pool-closings':('Pool Closings','Close it right. Dewinterize equipment, final clean, and cover installation.'),
- 'leak-detection':('Leak Detection &amp; Patches','Underwater leak location &amp; patching &mdash; no draining, usually one visit.'),
+ 'leak-detection':('Leak Detection','We find where your pool is losing water &mdash; and fix it, no draining.'),
 }
 
 NAVLABEL = {
  'pool-cleaning':'Pool Cleaning','pool-openings':'Pool Openings','chemical-balancing':'Chemical Balancing',
  'liner-installation':'Liner Installation','spa-service':'Spa Service','filter-maintenance':'Filter Maintenance',
  'equipment-repair':'Equipment Repair & Sales','pressure-washing':'Pressure Washing',
- 'pool-closings':'Pool Closings','leak-detection':'Leak Detection & Patches',
+ 'pool-closings':'Pool Closings','leak-detection':'Leak Detection',
 }
 
 # ----------------------------------------------------------------------------
