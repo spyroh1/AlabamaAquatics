@@ -102,7 +102,7 @@ def header():
 """
 
 def footer():
-    links = ''.join(f'<a href="/{s}">{NAVLABEL[s]}</a>\n      ' for s in ORDER)
+    links = ''.join(f'<a href="/{s}/">{NAVLABEL[s]}</a>\n      ' for s in ORDER)
     return f"""<footer>
   <a class="footer-logo" href="/"><img src="/images/logo-nav.png" alt="Alabama Aquatics" width="102" height="44"></a>
   <p>&copy; 2026 Alabama Aquatics LLC &nbsp;&bull;&nbsp; Birmingham, Alabama &nbsp;&bull;&nbsp; {PHONE}</p>
@@ -312,7 +312,7 @@ S['liner-installation'] = dict(
         <li><strong>Cut in the fittings</strong> &mdash; skimmer, returns, main drain, lights and steps are sealed with new gaskets and faceplates</li>
         <li><strong>Fill and balance</strong> &mdash; we refill the pool, bring the water chemistry to swim-ready, and make sure the equipment is running properly before we leave</li>
       </ul>
-      <p>Not sure whether your liner needs replacing or just a repair? We&apos;re also happy to take a look &mdash; if a patch or re-track will get you through the season, we&apos;ll tell you. Learn more about our <a class="inline-link" href="/liner-repairs">liner repair service</a>.</p>""",
+      <p>Not sure whether your liner needs replacing or just a repair? We&apos;re also happy to take a look &mdash; if a patch or re-track will get you through the season, we&apos;ll tell you. Learn more about our <a class="inline-link" href="/liner-repairs/">liner repair service</a>.</p>""",
   form=build_form('liner-installation',
      "Tell us about your pool and we&apos;ll get back to you with next steps.",
      contact_block()+SURFACE
@@ -458,7 +458,7 @@ S['liner-repairs'] = dict(
       <p>We locate the leak, then patch it underwater &mdash; no draining needed. Most leak repairs are completed in one visit, so you're back to a full pool with minimal disruption and no water bill from refilling.</p>
       <h2>Sagging Liner Re-Track</h2>
       <p>When a liner pulls away from the coping track and starts hanging into the water, we re-seat it by hand &mdash; restoring a clean, secure fit along the edge without needing a full liner replacement.</p>
-      <p>If the liner is brittle, badly faded, or leaking in multiple spots, a repair may only buy you a little time. In that case we'll walk you through a <a class="inline-link" href="/liner-installation">full liner replacement</a> instead.</p>""",
+      <p>If the liner is brittle, badly faded, or leaking in multiple spots, a repair may only buy you a little time. In that case we'll walk you through a <a class="inline-link" href="/liner-installation/">full liner replacement</a> instead.</p>""",
   form=build_form('liner-repairs',
      "Tell us what&apos;s going on and we&apos;ll get back to you shortly.",
      contact_block()+SURFACE
@@ -471,7 +471,7 @@ S['liner-repairs'] = dict(
 # ----------------------------------------------------------------------------
 def other_services(active):
     items = ''.join(
-      f'    <a href="/{s}">{NAVLABEL[s]}</a>\n'
+      f'    <a href="/{s}/">{NAVLABEL[s]}</a>\n'
       for s in ORDER if s != active)
     return f"""<section class="other-services">
   <h2>More From Alabama Aquatics</h2>
@@ -490,7 +490,7 @@ CTA = f"""<section class="cta">
 
 def service_jsonld(slug, d):
     name = NAVLABEL[slug]
-    url = f"{BASE}/{slug}"
+    url = f"{BASE}/{slug}/"
     return f"""<script type="application/ld+json">
 {{
   "@context": "https://schema.org",
@@ -526,7 +526,7 @@ def service_jsonld(slug, d):
 
 def build_service_page(slug):
     d = S[slug]
-    url = f"{BASE}/{slug}"
+    url = f"{BASE}/{slug}/"
     doc = head(d['title'], d['desc'].replace('&amp;','&'), url, extra=service_jsonld(slug, d))
     doc += header()
     doc += f"""<main id="main">
@@ -564,7 +564,7 @@ def home_cards():
     out = []
     for s in ORDER:
         t, sub = CARD[s]
-        out.append(f"""    <a class="service-card" href="/{s}">
+        out.append(f"""    <a class="service-card" href="/{s}/">
       <div class="service-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5dade2" stroke-width="2">{ICONS[s]}</svg>
       </div>
@@ -598,7 +598,7 @@ HOME_JSONLD = f"""<script type="application/ld+json">
     "name": "Pool Services",
     "itemListElement": [
 """ + ",\n".join(
-      f'      {{ "@type": "Offer", "itemOffered": {{ "@type": "Service", "name": "{NAVLABEL[s]}", "url": "{BASE}/{s}" }} }}'
+      f'      {{ "@type": "Offer", "itemOffered": {{ "@type": "Service", "name": "{NAVLABEL[s]}", "url": "{BASE}/{s}/" }} }}'
       for s in ORDER
 ) + """
     ]
@@ -684,7 +684,7 @@ print('wrote index.html', len(home))
 # ----------------------------------------------------------------------------
 from datetime import date
 today = date.today().isoformat()
-urls = [f"{BASE}/"] + [f"{BASE}/{s}" for s in ORDER]
+urls = [f"{BASE}/"] + [f"{BASE}/{s}/" for s in ORDER]
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 for u in urls:
     pr = '1.0' if u.endswith('/') and u.count('/') == 3 else '0.8'
@@ -697,8 +697,8 @@ open(os.path.join(OUT, 'robots.txt'), 'w', encoding='utf-8').write(
 
 open(os.path.join(OUT, '_redirects'), 'w', encoding='utf-8').write(
   "# Netlify redirects\n"
-  "/chemical-delivery   /liner-installation   301\n"
-  "/chemical-delivery/  /liner-installation   301\n")
+  "/chemical-delivery    /liner-installation/   301\n"
+  "/chemical-delivery/   /liner-installation/   301\n")
 
 # ----------------------------------------------------------------------------
 # 404 page
