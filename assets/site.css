@@ -94,7 +94,12 @@ a { color: inherit; }
   position: absolute; inset: 0; overflow: hidden;
   pointer-events: none; z-index: 0;
 }
-.bubble { position: absolute; border-radius: 50%; border: 1.5px solid var(--blue); opacity: 0.11; pointer-events: none; }
+.bubble {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(93,173,226,0.45);
+  background: radial-gradient(circle at 32% 28%, rgba(93,173,226,0.10), rgba(93,173,226,0.02) 70%);
+  pointer-events: none;
+}
 .hero-sub, .hero-logo, .hero .divider, .hero > p, .hero-btn, .hero-badge {
   position: relative; z-index: 1;
 }
@@ -366,9 +371,10 @@ footer p { color: #3d6070; font-size: 11px; letter-spacing: 1px; }
   .site-nav { position: static; padding: 0.8rem 1.2rem; justify-content: center; flex-direction: column; align-items: center; gap: 0.5rem; }
   .nav-logo img { height: 38px; }
   .nav-phone { font-size: 15px; letter-spacing: 1px; text-align: center; }
-  .trust-strip { gap: 0.8rem; padding: 0.6rem 1rem; }
-  .trust-strip span { font-size: 9px; }
+  .trust-strip { gap: 0.5rem; padding: 0.6rem 0.75rem; }
+  .trust-strip span { font-size: 9px; letter-spacing: 1px; padding: 0.35rem 0.7rem; }
   .hero { padding: 3rem 1.5rem 5rem; }
+  .hero-sub { letter-spacing: 3px; font-size: 10px; }
   .hero-logo { max-width: 280px; }
   .hero-badge { width: 70px; height: 70px; right: 0.5rem; bottom: -35px; }
   .hero-btn { padding: 1rem 2rem; font-size: 12px; letter-spacing: 2px; clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%); }

@@ -57,8 +57,9 @@ NAVLABEL = {
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">'
 
 FAVICON = (
- '<link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96.png">'
+ '<link rel="icon" href="/favicon.ico" sizes="any">'
  '<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">'
+ '<link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96.png">'
  '<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">'
 )
 
@@ -579,7 +580,7 @@ HOME_JSONLD = f"""<script type="application/ld+json">
   "@type": "LocalBusiness",
   "@id": "{BASE}/#business",
   "name": "Alabama Aquatics LLC",
-  "description": "Professional pool maintenance, cleaning, repair and pressure washing serving the Greater Birmingham, Alabama area.",
+  "description": "Professional pool service, cleaning, repair and pressure washing serving the Greater Birmingham, Alabama area.",
   "url": "{BASE}/",
   "telephone": "+1-205-810-6288",
   "email": "{EMAIL}",
@@ -607,25 +608,28 @@ HOME_JSONLD = f"""<script type="application/ld+json">
 </script>"""
 
 home = head(
-  "Alabama Aquatics | Professional Pool Maintenance",
-  "Professional pool maintenance, cleaning, chemical balancing, equipment repair and pressure washing for the Greater Birmingham, Alabama area. Licensed, insured, and built on integrity.",
+  "Alabama Aquatics | Professional Pool Service",
+  "Professional pool service, cleaning, chemical balancing, equipment repair and pressure washing for the Greater Birmingham, Alabama area. Licensed, insured, and built on integrity.",
   f"{BASE}/",
   extra=HOME_JSONLD,
 )
 home += header()
 home += f"""<main id="main">
-<h1 class="visually-hidden">Alabama Aquatics &mdash; Professional Pool Maintenance, Repair &amp; Pressure Washing in Greater Birmingham, Alabama</h1>
+<h1 class="visually-hidden">Alabama Aquatics &mdash; Professional Pool Service, Repair &amp; Pressure Washing in Greater Birmingham, Alabama</h1>
 <section class="hero">
   <div class="hero-bubbles" aria-hidden="true">
-    <div class="bubble" style="width:220px;height:220px;top:-80px;left:-80px;"></div>
-    <div class="bubble" style="width:90px;height:90px;top:18%;left:6%;"></div>
-    <div class="bubble" style="width:260px;height:260px;top:-100px;right:-100px;"></div>
-    <div class="bubble" style="width:100px;height:100px;top:22%;right:5%;"></div>
+    <div class="bubble" style="width:190px;height:190px;bottom:-55px;left:-35px;"></div>
+    <div class="bubble" style="width:64px;height:64px;top:27%;left:9%;"></div>
+    <div class="bubble" style="width:26px;height:26px;top:17%;left:19%;"></div>
+    <div class="bubble" style="width:225px;height:225px;top:-65px;right:-55px;"></div>
+    <div class="bubble" style="width:82px;height:82px;top:33%;right:8%;"></div>
+    <div class="bubble" style="width:20px;height:20px;top:60%;right:21%;"></div>
+    <div class="bubble" style="width:40px;height:40px;bottom:14%;left:26%;"></div>
   </div>
-  <div class="hero-sub">Professional Pool Maintenance</div>
+  <div class="hero-sub">Professional Pool Service</div>
   <img class="hero-logo" src="/images/logo-hero.png" alt="Alabama Aquatics" width="460" height="220">
   <div class="divider"><div class="dl"></div><div class="dd"></div><div class="dl"></div></div>
-  <p>Professional pool maintenance and pressure washing for the Greater Birmingham area. Licensed, insured, and built on integrity.</p>
+  <p>Professional pool service and pressure washing for the Greater Birmingham area. Licensed, insured, and built on integrity.</p>
   <a class="hero-btn" href="tel:{TEL}">Call Us Today &mdash; {PHONE}</a>
   <img class="hero-badge" src="/images/badge.png" alt="" width="100" height="100">
 </section>
