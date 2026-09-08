@@ -473,12 +473,16 @@ S['leak-detection'] = dict(
 # assemble service pages
 # ----------------------------------------------------------------------------
 def other_services(active):
-    items = ''.join(
-      f'    <a href="/{s}/">{NAVLABEL[s]}</a>\n'
-      for s in ORDER if s != active)
+    tiles = []
+    for s in ORDER:
+        if s == active:
+            tiles.append(f'    <span class="current" aria-current="page">{NAVLABEL[s]}</span>')
+        else:
+            tiles.append(f'    <a href="/{s}/">{NAVLABEL[s]}</a>')
+    items = '\n'.join(tiles) + '\n'
     return f"""<section class="other-services">
-  <h2>More From Alabama Aquatics</h2>
-  <div class="section-sub">Explore Our Services</div>
+  <h2>Explore Our Services</h2>
+  <div class="section-sub">What We Do</div>
   <div class="other-grid">
 {items}  </div>
 </section>
