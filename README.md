@@ -45,13 +45,42 @@ editing `_build/gen.py`.
 
 ## Deploying
 
-Push to `main`. Netlify builds and publishes in ~30 seconds. That's it.
+Push to `main`. Netlify (project `quiet-centaur-dea036`, team "Alabama Aquatics",
+Free plan) builds and publishes in ~30 seconds.
 
 ```
 git add -A
 git commit -m "describe the change"
 git push
 ```
+
+### Commit author rules (important — Free plan restriction)
+
+Netlify's Free plan **blocks builds from unrecognized Git contributors**. For a
+push to actually deploy, every commit must:
+
+- be authored as **`Alabama Aquatics <contact@alabamaaquatics.com>`**
+  (this repo's `.git/config` is already set to this; a fresh clone must run
+  `git config user.email contact@alabamaaquatics.com`)
+- contain **no `Co-Authored-By:` trailer** (a second author email that Netlify
+  doesn't recognize will block the whole build)
+
+If a push doesn't deploy, this is almost always why — check `git log -1 --format='%ae%n%(trailers)'`.
+
+### Manual deploy (fallback)
+
+If Git deploys ever break, deploy the folder straight to Netlify with an API token:
+
+```
+# zip the site (forward-slash paths), then:
+curl -X POST "https://api.netlify.com/api/v1/sites/abf362b6-5e07-4d76-af85-cd1e4531ef18/deploys" \
+  -H "Authorization: Bearer $NETLIFY_TOKEN" \
+  -H "Content-Type: application/zip" \
+  --data-binary @site.zip
+```
+
+Site ID: `abf362b6-5e07-4d76-af85-cd1e4531ef18`. Token: Netlify → User settings →
+Applications → Personal access tokens.
 
 ## Forms
 
