@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/favicon.ico?v=7a85f08e" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png?v=508e1f87"><link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96.png?v=c18b3f07"><link rel="apple-touch-icon" href="/images/apple-touch-icon.png?v=74335859">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=49c39ea4">
+<link rel="stylesheet" href="/assets/site.css?v=b69a6498">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -85,7 +85,6 @@
   </div>
 </div>
 <main id="main">
-<h1 class="visually-hidden">Alabama Aquatics &mdash; Professional Pool Service, Repair &amp; Pressure Washing in Greater Birmingham, Alabama</h1>
 <section class="hero">
   <div class="hero-bubbles" aria-hidden="true">
     <div class="bubble" style="width:190px;height:190px;bottom:-55px;left:-35px;"></div>
@@ -96,13 +95,67 @@
     <div class="bubble" style="width:20px;height:20px;top:60%;right:21%;"></div>
     <div class="bubble" style="width:40px;height:40px;bottom:14%;left:26%;"></div>
   </div>
-  <div class="hero-sub">Professional Pool Service</div>
-  <img class="hero-logo" src="/images/logo-hero.png?v=805afb39" alt="Alabama Aquatics" width="460" height="220">
-  <div class="divider"><div class="dl"></div><div class="dd"></div><div class="dl"></div></div>
-  <p>Professional pool service and pressure washing for the Greater Birmingham area. Licensed, insured, and built on integrity.</p>
-  <a class="hero-btn" href="tel:2058106288">Call Us Today &mdash; 205-810-6288</a>
-  <img class="hero-badge" src="/images/badge.png?v=40cde988" alt="" width="100" height="100">
+  <div class="hero-sub">Weekly Pool Service &bull; Greater Birmingham &amp; St. Clair County</div>
+  <img class="hero-logo" src="/images/logo-hero.png?v=805afb39" alt="Alabama Aquatics" width="440" height="201">
+  <h1>Owning the Pool Should Be the Fun Part</h1>
+  <p class="hero-lede">We handle the cleaning, chemical balancing, repairs, liner work and pressure washing &mdash; weekly or one-time &mdash; for homeowners across Greater Birmingham and St.&nbsp;Clair County. Licensed, insured, and locally owned.</p>
+  <div class="hero-cta-row">
+    <a class="btn-primary" href="#quote">Get a Free Quote</a>
+    <a class="btn-secondary" href="tel:2058106288">Call 205-810-6288</a>
+  </div>
+  
 </section>
+
+<section class="credentials" aria-label="Why trust Alabama Aquatics">
+  <div class="credentials-inner">
+    <div class="cred-item"><strong>Licensed &amp; Insured</strong><span>Full liability coverage on every visit</span></div>
+    <div class="cred-item"><strong>Locally Owned &amp; Operated</strong><span>Birmingham &amp; St. Clair County</span></div>
+    <div class="cred-item"><strong>Serving Since 2025</strong><span>Alabama Aquatics LLC</span></div>
+    <div class="cred-item"><strong>Free Quotes</strong><span>Weekly or one-time</span></div>
+  </div>
+</section>
+
+
+<section class="quote-form-wrap" id="quote">
+  <div class="quote-form-inner">
+      <h2>Get a Free Quote</h2>
+      <p>Tell us a little about your pool and we&apos;ll get right back to you &mdash; usually the same day.</p>
+      <form class="qform" name="home-quote" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event, 'home-quote')">
+        <input type="hidden" name="form-name" value="home-quote">
+        <p class="hp-field"><label>Leave this field empty: <input name="bot-field"></label></p>
+        <input type="text" name="name" placeholder="Full Name" required autocomplete="name">
+        <input type="tel" name="phone" placeholder="Phone Number" required autocomplete="tel">
+        <input type="email" name="email" placeholder="Email (optional)" autocomplete="email">
+        <input type="text" name="address" placeholder="Property Address or City" required autocomplete="street-address">
+        <select name="service" class="qform-full" aria-label="What do you need?">
+          <option value="">What do you need? (optional)</option>
+          <option value="Pool Cleaning">Pool Cleaning</option>
+          <option value="Pool Openings">Pool Openings</option>
+          <option value="Chemical Balancing">Chemical Balancing</option>
+          <option value="Liner Installation">Liner Installation</option>
+          <option value="Spa Service">Spa Service</option>
+          <option value="Filter Maintenance">Filter Maintenance</option>
+          <option value="Equipment Repair & Sales">Equipment Repair & Sales</option>
+          <option value="Pressure Washing">Pressure Washing</option>
+          <option value="Pool Closings">Pool Closings</option>
+          <option value="Leak Detection">Leak Detection</option>
+          <option value="Not sure">Not sure &mdash; help me figure it out</option>
+        </select>
+        <textarea name="notes" placeholder="Tell us about your pool (size, condition, anything else)" class="qform-full"></textarea>
+        <div class="qform-radio-group">
+          <div class="radio-label">Best way to reach you:</div>
+          <div class="qform-radio-opts">
+          <label class="qform-radio-opt"><input type="radio" name="contact" value="Call"> Call</label>
+          <label class="qform-radio-opt"><input type="radio" name="contact" value="Text"> Text</label>
+          <label class="qform-radio-opt"><input type="radio" name="contact" value="Email"> Email</label>
+          </div>
+        </div>
+        <button type="submit" class="qform-submit">Get My Free Quote</button>
+      </form>
+      <div class="form-success" id="success-home-quote">Thanks! We&apos;ll get back to you shortly &mdash; usually same day.</div>
+  </div>
+</section>
+
 
 <section class="services">
   <h2>Our Services</h2>
@@ -192,6 +245,8 @@
   </div>
 </section>
 
+
+
 <section class="why">
   <h2>Why Choose Us</h2>
   <div class="section-sub">The Alabama Aquatics Difference</div>
@@ -254,8 +309,40 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3d6070" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       contact@alabamaaquatics.com
     </a>
+    <a href="/contact/">Contact</a>
   </div>
 </footer>
-
+<div class="sticky-bar">
+  <a href="tel:2058106288" aria-label="Call Alabama Aquatics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1 .37 1.96.72 2.88a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.11-.45c.92.35 1.88.59 2.88.72A2 2 0 0 1 22 16.92z"/></svg>
+    <span>Call</span>
+  </a>
+  <a href="sms:2058106288" aria-label="Text Alabama Aquatics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Text</span>
+  </a>
+  <a href="#quote" class="sticky-quote" aria-label="Request a quote">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span>Free Quote</span>
+  </a>
+</div>
+<script>
+function handleSubmit(event, formName) {
+  event.preventDefault();
+  var form = event.target;
+  var data = new FormData(form);
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(data).toString()
+  }).then(function() {
+    form.style.display = 'none';
+    var success = document.getElementById('success-' + formName);
+    if (success) success.style.display = 'block';
+  }).catch(function() {
+    window.location.href = 'tel:2058106288';
+  });
+}
+</script>
 </body>
 </html>

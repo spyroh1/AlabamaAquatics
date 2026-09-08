@@ -40,6 +40,99 @@ TEL = '2058106288'
 EMAIL = 'contact@alabamaaquatics.com'
 FB = 'https://www.facebook.com/profile.php?id=61574288617629'
 IG = 'https://www.instagram.com/alabamaaquatics/'
+SMS = TEL  # texting number
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EDIT THESE to switch on the reviews / rating features.
+# While REVIEWS is empty and GOOGLE_RATING is None, nothing review-related
+# renders (no fake content ships) — the rest of the site is unaffected.
+# ─────────────────────────────────────────────────────────────────────────────
+FOUNDED_YEAR       = 2025
+HOURS              = "Monday – Saturday, 8 AM – 6 PM"   # TODO: confirm real hours
+GOOGLE_PROFILE_URL = ""      # paste your Google "write a review" / profile link
+GOOGLE_RATING      = None    # e.g. 4.9
+GOOGLE_REVIEW_COUNT = None   # e.g. 27
+REVIEWS = [
+    # Each: dict(name=, location=, service=, text=)  -- real Google reviews only.
+    # e.g. dict(name="Jane D.", location="Trussville", service="Weekly Pool Cleaning",
+    #           text="They show up every week like clockwork and the pool has never looked better."),
+]
+
+REVIEWS_ON = bool(REVIEWS)
+RATING_ON  = GOOGLE_RATING is not None and GOOGLE_REVIEW_COUNT is not None
+
+
+def stars_svg(rating):
+    """Row of 5 stars, filled to `rating` (halves rounded to nearest)."""
+    full = int(round(float(rating)))
+    out = []
+    for i in range(5):
+        fill = "#f5b301" if i < full else "none"
+        out.append(f'<svg viewBox="0 0 24 24" fill="{fill}" stroke="#f5b301" stroke-width="1.5" aria-hidden="true"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9"/></svg>')
+    return f'<span class="rating-stars">{"".join(out)}</span>'
+
+
+def rating_badge():
+    if not RATING_ON:
+        return ""
+    href = GOOGLE_PROFILE_URL or "#"
+    return (f'<a class="rating-badge" href="{href}" target="_blank" rel="noopener noreferrer">'
+            f'{stars_svg(GOOGLE_RATING)}'
+            f'<span><strong>{GOOGLE_RATING}</strong> &middot; {GOOGLE_REVIEW_COUNT} Google reviews</span></a>')
+
+
+def review_card(r):
+    loc = f' &middot; {r["location"]}' if r.get("location") else ""
+    svc = f'<span class="review-svc">{r["service"]}</span>' if r.get("service") else ""
+    return (f'    <figure class="review-card">\n'
+            f'      {stars_svg(GOOGLE_RATING or 5)}\n'
+            f'      <blockquote>{r["text"]}</blockquote>\n'
+            f'      <figcaption>&mdash; {r["name"]}{loc}</figcaption>\n'
+            f'      {svc}\n'
+            f'    </figure>')
+
+
+def reviews_section(service=None, limit=3):
+    if not REVIEWS_ON:
+        return ""
+    picked = [r for r in REVIEWS if r.get("service") == service] if service else []
+    if len(picked) < limit:
+        picked += [r for r in REVIEWS if r not in picked]
+    picked = picked[:limit]
+    head_line = ""
+    if RATING_ON:
+        href = GOOGLE_PROFILE_URL or "#"
+        head_line = (f'  <a class="reviews-rating" href="{href}" target="_blank" rel="noopener noreferrer">'
+                     f'{stars_svg(GOOGLE_RATING)} <span><strong>{GOOGLE_RATING}</strong> from {GOOGLE_REVIEW_COUNT} Google reviews</span></a>')
+    more = f'  <a class="reviews-more" href="/reviews/">Read more reviews</a>' if len(REVIEWS) > limit else ''
+    return f"""<section class="reviews">
+  <h2>What Our Customers Say</h2>
+  <div class="section-sub">Real Reviews</div>
+{head_line}
+  <div class="reviews-grid">
+{chr(10).join(review_card(r) for r in picked)}
+  </div>
+{more}
+</section>
+"""
+
+
+def review_jsonld():
+    """AggregateRating + Review array — only when we have a real rating AND reviews."""
+    if not (RATING_ON and REVIEWS_ON):
+        return ""
+    revs = ",\n".join(
+        '    { "@type": "Review", "author": { "@type": "Person", "name": "%s" }, '
+        '"reviewRating": { "@type": "Rating", "ratingValue": "%s", "bestRating": "5" }, '
+        '"reviewBody": %s }' % (r["name"], GOOGLE_RATING, _json_str(r["text"]))
+        for r in REVIEWS[:8]
+    )
+    return (',\n  "aggregateRating": { "@type": "AggregateRating", "ratingValue": "%s", "reviewCount": "%s" },\n'
+            '  "review": [\n%s\n  ]' % (GOOGLE_RATING, GOOGLE_REVIEW_COUNT, revs))
+
+
+def _json_str(s):
+    return '"' + s.replace('\\', '\\\\').replace('"', '\\"').replace('&mdash;', '—').replace('&amp;', '&') + '"'
 
 # ----------------------------------------------------------------------------
 # service order (drives cards, other-services, sitemap, footer nav)
@@ -169,8 +262,89 @@ def footer():
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3d6070" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       {EMAIL}
     </a>
+    <a href="/contact/">Contact</a>{'''
+    <a href="/reviews/">Reviews</a>''' if (REVIEWS_ON or GOOGLE_PROFILE_URL) else ''}
   </div>
 </footer>
+"""
+
+
+def sticky_bar(quote_href="#quote"):
+    return f"""<div class="sticky-bar">
+  <a href="tel:{TEL}" aria-label="Call Alabama Aquatics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1 .37 1.96.72 2.88a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.11-.45c.92.35 1.88.59 2.88.72A2 2 0 0 1 22 16.92z"/></svg>
+    <span>Call</span>
+  </a>
+  <a href="sms:{SMS}" aria-label="Text Alabama Aquatics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Text</span>
+  </a>
+  <a href="{quote_href}" class="sticky-quote" aria-label="Request a quote">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span>Free Quote</span>
+  </a>
+</div>
+"""
+
+
+def page_tail(quote_href="#quote", with_form_js=True):
+    return footer() + sticky_bar(quote_href) + (FORM_JS if with_form_js else "") + "\n</body>\n</html>\n"
+
+
+# ── credentials band (homepage) ──────────────────────────────────────────────
+def credentials_band():
+    items = [
+        ("Licensed &amp; Insured", "Full liability coverage on every visit"),
+        ("Locally Owned &amp; Operated", "Birmingham &amp; St. Clair County"),
+        (f"Serving Since {FOUNDED_YEAR}", "Alabama Aquatics LLC"),
+        ("Free Quotes", "Weekly or one-time"),
+    ]
+    cells = "\n".join(
+        f'    <div class="cred-item"><strong>{t}</strong><span>{s}</span></div>'
+        for t, s in items)
+    return f"""<section class="credentials" aria-label="Why trust Alabama Aquatics">
+  <div class="credentials-inner">
+{cells}
+  </div>
+</section>
+"""
+
+
+# ── home / contact quote form ────────────────────────────────────────────────
+SERVICE_OPTS = "\n".join(
+    f'          <option value="{NAVLABEL[s]}">{NAVLABEL[s]}</option>' for s in ORDER)
+
+def quote_form(form_name, heading, intro, submit="Get My Free Quote"):
+    return f"""<section class="quote-form-wrap" id="quote">
+  <div class="quote-form-inner">
+      <h2>{heading}</h2>
+      <p>{intro}</p>
+      <form class="qform" name="{form_name}" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event, '{form_name}')">
+        <input type="hidden" name="form-name" value="{form_name}">
+        <p class="hp-field"><label>Leave this field empty: <input name="bot-field"></label></p>
+        <input type="text" name="name" placeholder="Full Name" required autocomplete="name">
+        <input type="tel" name="phone" placeholder="Phone Number" required autocomplete="tel">
+        <input type="email" name="email" placeholder="Email (optional)" autocomplete="email">
+        <input type="text" name="address" placeholder="Property Address or City" required autocomplete="street-address">
+        <select name="service" class="qform-full" aria-label="What do you need?">
+          <option value="">What do you need? (optional)</option>
+{SERVICE_OPTS}
+          <option value="Not sure">Not sure &mdash; help me figure it out</option>
+        </select>
+        <textarea name="notes" placeholder="Tell us about your pool (size, condition, anything else)" class="qform-full"></textarea>
+        <div class="qform-radio-group">
+          <div class="radio-label">Best way to reach you:</div>
+          <div class="qform-radio-opts">
+          <label class="qform-radio-opt"><input type="radio" name="contact" value="Call"> Call</label>
+          <label class="qform-radio-opt"><input type="radio" name="contact" value="Text"> Text</label>
+          <label class="qform-radio-opt"><input type="radio" name="contact" value="Email"> Email</label>
+          </div>
+        </div>
+        <button type="submit" class="qform-submit">{submit}</button>
+      </form>
+      <div class="form-success" id="success-{form_name}">Thanks! We&apos;ll get back to you shortly &mdash; usually same day.</div>
+  </div>
+</section>
 """
 
 FORM_JS = """<script>
@@ -596,12 +770,12 @@ def build_service_page(slug):
 {d['body']}
   </article>
   {d['form']}
+  {reviews_section(NAVLABEL[slug])}
   {other_services(slug)}
   {CTA}
 </main>
 """
-    doc += footer()
-    doc += FORM_JS + "\n</body>\n</html>\n"
+    doc += page_tail(quote_href="#quote")
     doc = add_asset_versions(doc)
     folder = os.path.join(OUT, slug)
     os.makedirs(folder, exist_ok=True)
@@ -656,7 +830,7 @@ HOME_JSONLD = f"""<script type="application/ld+json">
       for s in ORDER
 ) + """
     ]
-  }
+  }""" + review_jsonld() + """
 }
 </script>"""
 
@@ -668,7 +842,6 @@ home = head(
 )
 home += header()
 home += f"""<main id="main">
-<h1 class="visually-hidden">Alabama Aquatics &mdash; Professional Pool Service, Repair &amp; Pressure Washing in Greater Birmingham, Alabama</h1>
 <section class="hero">
   <div class="hero-bubbles" aria-hidden="true">
     <div class="bubble" style="width:190px;height:190px;bottom:-55px;left:-35px;"></div>
@@ -679,13 +852,20 @@ home += f"""<main id="main">
     <div class="bubble" style="width:20px;height:20px;top:60%;right:21%;"></div>
     <div class="bubble" style="width:40px;height:40px;bottom:14%;left:26%;"></div>
   </div>
-  <div class="hero-sub">Professional Pool Service</div>
-  <img class="hero-logo" src="/images/logo-hero.png" alt="Alabama Aquatics" width="460" height="220">
-  <div class="divider"><div class="dl"></div><div class="dd"></div><div class="dl"></div></div>
-  <p>Professional pool service and pressure washing for the Greater Birmingham area. Licensed, insured, and built on integrity.</p>
-  <a class="hero-btn" href="tel:{TEL}">Call Us Today &mdash; {PHONE}</a>
-  <img class="hero-badge" src="/images/badge.png" alt="" width="100" height="100">
+  <div class="hero-sub">Weekly Pool Service &bull; Greater Birmingham &amp; St. Clair County</div>
+  <img class="hero-logo" src="/images/logo-hero.png" alt="Alabama Aquatics" width="440" height="201">
+  <h1>Owning the Pool Should Be the Fun Part</h1>
+  <p class="hero-lede">We handle the cleaning, chemical balancing, repairs, liner work and pressure washing &mdash; weekly or one-time &mdash; for homeowners across Greater Birmingham and St.&nbsp;Clair County. Licensed, insured, and locally owned.</p>
+  <div class="hero-cta-row">
+    <a class="btn-primary" href="#quote">Get a Free Quote</a>
+    <a class="btn-secondary" href="tel:{TEL}">Call {PHONE}</a>
+  </div>
+  {rating_badge()}
 </section>
+
+{credentials_band()}
+
+{quote_form('home-quote', 'Get a Free Quote', 'Tell us a little about your pool and we&apos;ll get right back to you &mdash; usually the same day.')}
 
 <section class="services">
   <h2>Our Services</h2>
@@ -696,6 +876,8 @@ home += f"""<main id="main">
 
   </div>
 </section>
+
+{reviews_section()}
 
 <section class="why">
   <h2>Why Choose Us</h2>
@@ -731,8 +913,7 @@ home += f"""<main id="main">
 </section>
 </main>
 """
-home += footer()
-home += "\n</body>\n</html>\n"
+home += page_tail(quote_href="#quote")
 home = add_asset_versions(home)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(home)
 print('wrote index.html', len(home))
@@ -742,7 +923,9 @@ print('wrote index.html', len(home))
 # ----------------------------------------------------------------------------
 from datetime import date
 today = date.today().isoformat()
-urls = [f"{BASE}/"] + [f"{BASE}/{s}/" for s in ORDER]
+urls = [f"{BASE}/"] + [f"{BASE}/{s}/" for s in ORDER] + [f"{BASE}/contact/"]
+if REVIEWS or GOOGLE_PROFILE_URL:
+    urls.append(f"{BASE}/reviews/")
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 for u in urls:
     pr = '1.0' if u.endswith('/') and u.count('/') == 3 else '0.8'
@@ -777,8 +960,88 @@ nf += f"""<main id="main">
   {other_services('')}
 </main>
 """
-nf += footer() + "\n</body>\n</html>\n"
+nf += page_tail(quote_href="/#quote", with_form_js=False)
 open(os.path.join(OUT, '404.html'), 'w', encoding='utf-8').write(add_asset_versions(nf))
+
+# ----------------------------------------------------------------------------
+# /contact/  and  /reviews/
+# ----------------------------------------------------------------------------
+def _write(rel_dir, doc):
+    d = os.path.join(OUT, rel_dir)
+    os.makedirs(d, exist_ok=True)
+    open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(add_asset_versions(doc))
+    print('wrote', rel_dir + '/index.html', len(doc))
+
+# ---- Contact ----
+c = head("Contact Alabama Aquatics | Pool Service in Greater Birmingham, AL",
+         "Contact Alabama Aquatics for pool cleaning, repairs, liner work and pressure washing in Greater Birmingham and St. Clair County. Call, text, or request a free quote.",
+         f"{BASE}/contact/")
+c += header()
+c += f"""<main id="main">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <span>Contact</span></nav>
+  <header class="service-hero">
+    <p class="eyebrow">Get In Touch</p>
+    <h1>Contact Alabama Aquatics</h1>
+    <p class="lede">Call or text for the fastest response, or send the form below and we&apos;ll get right back to you &mdash; usually the same day.</p>
+  </header>
+  <section class="contact-cols">
+    <div class="contact-details">
+      <h2>Reach Us</h2>
+      <ul class="contact-list">
+        <li><span class="cl-label">Phone</span><a href="tel:{TEL}">{PHONE}</a></li>
+        <li><span class="cl-label">Text</span><a href="sms:{SMS}">{PHONE}</a></li>
+        <li><span class="cl-label">Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></li>
+        <li><span class="cl-label">Hours</span><span>{HOURS}</span></li>
+        <li><span class="cl-label">Area</span><span>Greater Birmingham &mdash; St. Clair, Jefferson &amp; Shelby County (Trussville, Springville, Odenville, Moody, Leeds, Hoover, Vestavia Hills, Mountain Brook and nearby)</span></li>
+      </ul>
+      <div class="contact-social">
+        <a href="{FB}" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a href="{IG}" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </div>
+    </div>
+    <div class="contact-form-col">
+      {quote_form('contact', 'Request a Free Quote', 'Every pool is different. Give us the basics and we&apos;ll follow up with next steps.', submit='Send')}
+    </div>
+  </section>
+  {reviews_section()}
+  {CTA}
+</main>
+"""
+c += page_tail(quote_href="#quote")
+_write('contact', c)
+
+# ---- Reviews (only if there is something real to show) ----
+if REVIEWS_ON or GOOGLE_PROFILE_URL:
+    rv = head("Customer Reviews | Alabama Aquatics Pool Service",
+              "Reviews from Alabama Aquatics pool service customers across Greater Birmingham and St. Clair County.",
+              f"{BASE}/reviews/",
+              extra=(f'<script type="application/ld+json">\n{{\n  "@context":"https://schema.org","@type":"LocalBusiness","name":"Alabama Aquatics LLC","url":"{BASE}/"'
+                     + review_jsonld() + '\n}\n</script>' if (RATING_ON and REVIEWS_ON) else ''))
+    rv += header()
+    summary = ""
+    if RATING_ON:
+        href = GOOGLE_PROFILE_URL or "#"
+        summary = f'<a class="reviews-rating" href="{href}" target="_blank" rel="noopener noreferrer">{stars_svg(GOOGLE_RATING)} <span><strong>{GOOGLE_RATING}</strong> from {GOOGLE_REVIEW_COUNT} Google reviews</span></a>'
+    cards = "\n".join(review_card(r) for r in REVIEWS) if REVIEWS_ON else '  <p style="text-align:center;color:var(--slate);">Reviews are on the way &mdash; be our first!</p>'
+    leave = f'<a class="btn-primary" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener noreferrer">Leave Us a Review on Google</a>' if GOOGLE_PROFILE_URL else ''
+    rv += f"""<main id="main">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; <span>Reviews</span></nav>
+  <header class="service-hero">
+    <p class="eyebrow">Customer Reviews</p>
+    <h1>What Our Customers Say</h1>
+    {summary}
+  </header>
+  <section class="reviews reviews-page">
+    <div class="reviews-grid">
+{cards}
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">{leave}</div>
+  </section>
+  {CTA}
+</main>
+"""
+    rv += page_tail(quote_href="/#quote", with_form_js=False)
+    _write('reviews', rv)
 
 print('wrote sitemap.xml, robots.txt, _redirects, 404.html')
 print('DONE')
