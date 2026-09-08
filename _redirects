@@ -1,3 +1,5 @@
 # Netlify redirects
 /chemical-delivery    /liner-installation/   301
 /chemical-delivery/   /liner-installation/   301
+/liner-repairs        /leak-detection/       301
+/liner-repairs/       /leak-detection/       301

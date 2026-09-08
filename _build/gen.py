@@ -16,7 +16,7 @@ IG = 'https://www.instagram.com/alabamaaquatics/'
 # ----------------------------------------------------------------------------
 ORDER = ['pool-cleaning','pool-openings','chemical-balancing','liner-installation',
          'spa-service','filter-maintenance','equipment-repair','pressure-washing',
-         'pool-closings','liner-repairs']
+         'pool-closings','leak-detection']
 
 ICONS = {
  'pool-cleaning':'<path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M2 12h4M18 12h4M12 2v4M12 18v4"/>',
@@ -28,7 +28,7 @@ ICONS = {
  'equipment-repair':'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
  'pressure-washing':'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
  'pool-closings':'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
- 'liner-repairs':'<rect x="4" y="8" width="16" height="8" rx="4" transform="rotate(-12 12 12)"/><line x1="9.5" y1="8.5" x2="9.5" y2="15.5" transform="rotate(-12 12 12)"/><line x1="14.5" y1="8.5" x2="14.5" y2="15.5" transform="rotate(-12 12 12)"/>',
+ 'leak-detection':'<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8c-1 1.2-1.6 2.2-1.6 3A1.6 1.6 0 0 0 11 12.6 1.6 1.6 0 0 0 12.6 11c0-.8-.6-1.8-1.6-3z"/>',
 }
 
 CARD = {
@@ -41,14 +41,14 @@ CARD = {
  'equipment-repair':('Equipment Repair &amp; Sales','Pumps, filters, heaters, salt cells &amp; full installs. All major brands.'),
  'pressure-washing':('Pressure Washing','Pool decks, driveways, sidewalks, brick, pavers and home exteriors.'),
  'pool-closings':('Pool Closings','Close it right. Dewinterize equipment, final clean, and cover installation.'),
- 'liner-repairs':('Liner Repairs','Underwater leak detection &amp; patching, plus sagging liner re-tracks.'),
+ 'leak-detection':('Leak Detection &amp; Patches','Underwater leak location &amp; patching &mdash; no draining, usually one visit.'),
 }
 
 NAVLABEL = {
  'pool-cleaning':'Pool Cleaning','pool-openings':'Pool Openings','chemical-balancing':'Chemical Balancing',
  'liner-installation':'Liner Installation','spa-service':'Spa Service','filter-maintenance':'Filter Maintenance',
  'equipment-repair':'Equipment Repair & Sales','pressure-washing':'Pressure Washing',
- 'pool-closings':'Pool Closings','liner-repairs':'Liner Repairs',
+ 'pool-closings':'Pool Closings','leak-detection':'Leak Detection & Patches',
 }
 
 # ----------------------------------------------------------------------------
@@ -313,7 +313,7 @@ S['liner-installation'] = dict(
         <li><strong>Cut in the fittings</strong> &mdash; skimmer, returns, main drain, lights and steps are sealed with new gaskets and faceplates</li>
         <li><strong>Fill and balance</strong> &mdash; we refill the pool, bring the water chemistry to swim-ready, and make sure the equipment is running properly before we leave</li>
       </ul>
-      <p>Not sure whether your liner needs replacing or just a repair? We&apos;re also happy to take a look &mdash; if a patch or re-track will get you through the season, we&apos;ll tell you. Learn more about our <a class="inline-link" href="/liner-repairs/">liner repair service</a>.</p>""",
+      <p>Not sure whether your liner needs replacing or just a repair? We&apos;re also happy to take a look &mdash; if a patch or re-track will get you through the season, we&apos;ll tell you. Learn more about our <a class="inline-link" href="/leak-detection/">leak detection &amp; patching service</a>.</p>""",
   form=build_form('liner-installation',
      "Tell us about your pool and we&apos;ll get back to you with next steps.",
      contact_block()+SURFACE
@@ -448,19 +448,21 @@ S['pool-closings'] = dict(
        +textarea('notes',"Anything else you'd like us to know?")),
 )
 
-S['liner-repairs'] = dict(
-  title="Vinyl Liner Leak Repair & Re-Track in Birmingham, AL | Alabama Aquatics",
-  desc="Underwater vinyl liner leak detection and patching plus sagging liner re-tracks in Greater Birmingham. Most repairs done in one visit with no draining required.",
-  eyebrow="Underwater Patching &bull; Liner Re-Tracks &bull; No Draining Required",
-  h1="Found a Leak or a Sagging Liner? We Fix It On The Spot.",
-  lede="A damaged vinyl liner doesn&apos;t have to mean draining your pool. We handle the two most common liner problems &mdash; leaks and sagging &mdash; right at your pool, usually in one visit.",
-  body="""      <p>A damaged vinyl liner doesn't have to mean draining your pool or living with a leak all season. Alabama Aquatics handles the two most common liner problems &mdash; leaks and sagging &mdash; right at your pool, usually in a single visit.</p>
-      <h2>Leak Detection &amp; Patching</h2>
-      <p>We locate the leak, then patch it underwater &mdash; no draining needed. Most leak repairs are completed in one visit, so you're back to a full pool with minimal disruption and no water bill from refilling.</p>
+S['leak-detection'] = dict(
+  title="Pool Leak Detection & Vinyl Liner Patching in Birmingham, AL | Alabama Aquatics",
+  desc="Pool leak detection and underwater vinyl liner patching in Greater Birmingham. We find the leak and patch it in one visit \u2014 no draining, no refilling. Sagging liner re-tracks too.",
+  eyebrow="Leak Location &bull; Underwater Patching &bull; No Draining Required",
+  h1="Losing Water? We\u2019ll Find the Leak and Patch It.",
+  lede="A slow leak wastes thousands of gallons and drives your chemical costs up. We track down where your vinyl liner is leaking and patch it underwater &mdash; usually in a single visit, with no need to drain the pool.",
+  body="""      <p>If your pool is dropping more than about a quarter-inch a day, you likely have a leak &mdash; and a slow one can waste thousands of gallons and throw your water chemistry off all season. Alabama Aquatics tracks down where the water is going and fixes it on-site, usually in one visit.</p>
+      <h2>Leak Detection</h2>
+      <p>We work through the pool systematically &mdash; skimmers, returns, main drain, fittings, steps, and the liner surface itself &mdash; to pin down exactly where the leak is. No guesswork and no tearing things apart.</p>
+      <h2>Underwater Patching</h2>
+      <p>Once we find it, we patch the liner underwater with professional-grade vinyl patch material. No draining, no refilling, no water bill. Most patches are done in a single visit and hold for the life of the liner.</p>
       <h2>Sagging Liner Re-Track</h2>
-      <p>When a liner pulls away from the coping track and starts hanging into the water, we re-seat it by hand &mdash; restoring a clean, secure fit along the edge without needing a full liner replacement.</p>
-      <p>If the liner is brittle, badly faded, or leaking in multiple spots, a repair may only buy you a little time. In that case we'll walk you through a <a class="inline-link" href="/liner-installation/">full liner replacement</a> instead.</p>""",
-  form=build_form('liner-repairs',
+      <p>While we're there: if your liner has pulled away from the coping track and is hanging into the water, we re-seat it by hand &mdash; restoring a clean, secure fit along the top edge.</p>
+      <p>If the liner is brittle, badly faded, or leaking in several spots at once, patching may only buy you a season. In that case we'll walk you through a <a class="inline-link" href="/liner-installation/">full liner replacement</a> instead.</p>""",
+  form=build_form('leak-detection',
      "Tell us what&apos;s going on and we&apos;ll get back to you shortly.",
      contact_block()+SURFACE
        +textarea('issue',"Describe the issue -- leak, sagging liner, location, how long it's been going on, etc.", required=True, minh=110)
@@ -702,7 +704,9 @@ open(os.path.join(OUT, 'robots.txt'), 'w', encoding='utf-8').write(
 open(os.path.join(OUT, '_redirects'), 'w', encoding='utf-8').write(
   "# Netlify redirects\n"
   "/chemical-delivery    /liner-installation/   301\n"
-  "/chemical-delivery/   /liner-installation/   301\n")
+  "/chemical-delivery/   /liner-installation/   301\n"
+  "/liner-repairs        /leak-detection/       301\n"
+  "/liner-repairs/       /leak-detection/       301\n")
 
 # ----------------------------------------------------------------------------
 # 404 page
