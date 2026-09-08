@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 import os, html as _h
 
-import pathlib
+import pathlib, hashlib
 # repo root = parent of the _build/ folder this script lives in
 OUT = str(pathlib.Path(__file__).resolve().parent.parent)
+
+# content hash of the stylesheet -> cache-busting query on every <link>
+try:
+    CSS_VER = hashlib.md5(
+        open(os.path.join(OUT, 'assets', 'site.css'), 'rb').read()
+    ).hexdigest()[:8]
+except OSError:
+    CSS_VER = '1'
+
 BASE = 'https://alabamaaquatics.com'
 PHONE = '205-810-6288'
 TEL = '2058106288'
@@ -82,7 +91,7 @@ def head(title, desc, canonical, og_image='/images/logo-badge-512.png', extra=''
 <meta name="twitter:card" content="summary">
 {FAVICON}
 {FONTS}
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/site.css?v={CSS_VER}">
 {extra}
 </head>
 <body>
@@ -92,13 +101,29 @@ def head(title, desc, canonical, og_image='/images/logo-badge-512.png', extra=''
 def header():
     return f"""<nav class="site-nav">
   <a class="nav-logo" href="/" aria-label="Alabama Aquatics home"><img src="/images/logo-nav.png" alt="Alabama Aquatics" width="120" height="52"></a>
-  <a class="nav-phone" href="tel:{TEL}">{PHONE}</a>
+  <div class="nav-contact">
+    <a class="nav-email" href="mailto:{EMAIL}" aria-label="Email Alabama Aquatics at {EMAIL}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span>{EMAIL}</span>
+    </a>
+    <a class="nav-phone" href="tel:{TEL}">{PHONE}</a>
+  </div>
 </nav>
 <div class="trust-strip">
-  <span>Licensed &amp; Insured</span>
-  <span>Weekly Service</span>
-  <span>Greater Birmingham</span>
-  <span>Locally Owned</span>
+  <div class="trust-items">
+    <span>Licensed &amp; Insured</span>
+    <span>Weekly Service</span>
+    <span>Greater Birmingham</span>
+    <span>Locally Owned</span>
+  </div>
+  <div class="trust-social">
+    <a href="{FB}" target="_blank" rel="noopener noreferrer" aria-label="Alabama Aquatics on Facebook">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>
+    <a href="{IG}" target="_blank" rel="noopener noreferrer" aria-label="Alabama Aquatics on Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </a>
+  </div>
 </div>
 """
 
