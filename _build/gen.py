@@ -673,11 +673,11 @@ home += f"""<main id="main">
   <div class="hero-bubbles" aria-hidden="true">
     <div class="bubble" style="width:190px;height:190px;bottom:-55px;left:-35px;"></div>
     <div class="bubble" style="width:64px;height:64px;top:27%;left:9%;"></div>
-    <div class="bubble" style="width:26px;height:26px;top:17%;left:19%;"></div>
+    <div class="bubble bubble-mobile-hide" style="width:26px;height:26px;top:17%;left:19%;"></div>
     <div class="bubble" style="width:225px;height:225px;top:-65px;right:-55px;"></div>
-    <div class="bubble" style="width:82px;height:82px;top:33%;right:8%;"></div>
-    <div class="bubble" style="width:20px;height:20px;top:60%;right:21%;"></div>
-    <div class="bubble" style="width:40px;height:40px;bottom:14%;left:26%;"></div>
+    <div class="bubble bubble-mobile-hide" style="width:82px;height:82px;top:33%;right:8%;"></div>
+    <div class="bubble bubble-mobile-hide" style="width:20px;height:20px;top:60%;right:21%;"></div>
+    <div class="bubble bubble-mobile-hide" style="width:40px;height:40px;bottom:14%;left:26%;"></div>
   </div>
   <div class="hero-sub">Professional Pool Service</div>
   <img class="hero-logo" src="/images/logo-hero.png" alt="Alabama Aquatics" width="460" height="220">

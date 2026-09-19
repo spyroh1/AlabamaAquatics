@@ -425,6 +425,7 @@ footer p { color: #3d6070; font-size: 11px; letter-spacing: 1px; }
   .qform { grid-template-columns: 1fr; }
   .qform-full, .qform-submit { grid-column: 1; }
   .qform-check-group { display: none; }
+  .bubble-mobile-hide { display: none; }
   .service-content .photo-pair { grid-template-columns: 1fr; }
   .service-content .photo-pair img { height: 200px; }
 }
