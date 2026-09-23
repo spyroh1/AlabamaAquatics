@@ -142,7 +142,7 @@ a { color: inherit; }
   color: var(--blue); font-size: 11px; font-weight: 600;
   letter-spacing: 6px; text-transform: uppercase; margin-bottom: 1.8rem;
 }
-.hero-logo { width: 100%; max-width: 460px; height: auto; display: block; margin: 0 auto; }
+.hero-logo { width: 100%; max-width: 529px; height: auto; display: block; margin: 0 auto; }
 .divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 1.8rem auto; }
 .dl { width: 50px; height: 1px; background: var(--blue); }
 .dd { width: 5px; height: 5px; background: var(--blue); transform: rotate(45deg); flex-shrink: 0; }
@@ -451,7 +451,7 @@ footer p { color: #3d6070; font-size: 11px; letter-spacing: 1px; }
   .trust-items span { font-size: 9px; letter-spacing: 1px; padding: 0.25rem 0; }
   .hero { padding: 3rem 1.5rem 5rem; }
   .hero-sub { letter-spacing: 3px; font-size: 10px; }
-  .hero-logo { max-width: 280px; }
+  .hero-logo { max-width: 322px; }
   .hero-badge { width: 70px; height: 70px; right: 0.5rem; bottom: -35px; }
   .hero-btn { padding: 1rem 2rem; font-size: 12px; letter-spacing: 2px; clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%); }
   .services-grid { grid-template-columns: 1fr; }
