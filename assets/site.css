@@ -338,10 +338,6 @@ footer p { color: #3d6070; font-size: 11px; letter-spacing: 1px; }
   display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
 }
 .gallery-card-pair .gallery-pair-imgs img { height: 220px; }
-.gallery-card figcaption {
-  padding: 0.9rem 1.1rem; font-size: 13px; font-weight: 600;
-  letter-spacing: 0.3px; color: #0a2240;
-}
 @media (max-width: 900px) {
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 }

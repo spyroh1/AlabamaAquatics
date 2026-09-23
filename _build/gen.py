@@ -623,35 +623,24 @@ for slug in ORDER:
 # every real customer/job photo on the site, excluding the Pentair sand filter
 # stock shot on the filter-maintenance page (not a job photo).
 GALLERY_ITEMS = [
-  ('single', 'JANEDOE.jpg', 'Clean backyard pool serviced by Alabama Aquatics', 'Weekly Pool Cleaning'),
+  ('single', 'JANEDOE.jpg', 'Clean backyard pool serviced by Alabama Aquatics'),
   ('pair', 'emilysbefore.jpg', 'emilysafter.jpg',
-     'Green pool before opening service', 'Clear pool after Green to Clean service',
-     'Green to Clean &mdash; Pool Opening'),
-  ('single', 'scottandginaperfect.jpg', 'Crystal clear balanced pool', 'Chemical Balancing'),
-  ('single', 'poollinerinstall.jpg', 'Technician installing a new vinyl pool liner', 'Vinyl Liner Installation'),
-  ('single', 'hottub.jpg', 'Hot tub spa serviced by Alabama Aquatics', 'Spa &amp; Hot Tub Service'),
-  ('single', 'cartridge-cleaning.jpg', 'Pool cartridge filter before and after cleaning', 'Cartridge Filter Cleaning'),
-  ('single', 'equipment.webp', 'Pool equipment pad with pump and filter', 'Equipment Repair &amp; Installs'),
-  ('single', 'pooldeckclean.jpg', 'Pool deck before and after pressure washing', 'Pool Deck Pressure Washing'),
-  ('single', 'housewash.jpg', 'House exterior before and after soft washing', 'House Soft Washing'),
-  ('single', 'sidewalkclean.jpg', 'Sidewalk before and after pressure washing', 'Sidewalk Pressure Washing'),
-  ('single', 'poolcover.jpg', 'Pool covered for winter', 'Pool Closings &amp; Winterization'),
+     'Green pool before opening service', 'Clear pool after Green to Clean service'),
+  ('single', 'equipment.webp', 'Pool equipment pad with pump and filter'),
 ]
 
 def gallery_card(item):
     if item[0] == 'single':
-        _, img, alt, cap = item
+        _, img, alt = item
         return f"""    <figure class="gallery-card">
       <img src="/images/{img}" alt="{alt}" loading="lazy" onerror="this.style.display='none'">
-      <figcaption>{cap}</figcaption>
     </figure>"""
-    _, img1, img2, alt1, alt2, cap = item
+    _, img1, img2, alt1, alt2 = item
     return f"""    <figure class="gallery-card gallery-card-pair">
       <div class="gallery-pair-imgs">
         <img src="/images/{img1}" alt="{alt1}" loading="lazy" onerror="this.style.display='none'">
         <img src="/images/{img2}" alt="{alt2}" loading="lazy" onerror="this.style.display='none'">
       </div>
-      <figcaption>{cap}</figcaption>
     </figure>"""
 
 def build_gallery_page():
