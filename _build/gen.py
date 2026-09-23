@@ -131,6 +131,12 @@ def header():
   </div>
 </nav>
 <div class="trust-strip">
+  <div class="trust-gallery">
+    <a href="/gallery/" aria-label="View our photo gallery">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Gallery</span>
+    </a>
+  </div>
   <div class="trust-items">
     <span>Licensed &amp; Insured</span>
     <span>Weekly Service</span>
@@ -612,6 +618,76 @@ for slug in ORDER:
     build_service_page(slug)
 
 # ----------------------------------------------------------------------------
+# GALLERY PAGE
+# ----------------------------------------------------------------------------
+# every real customer/job photo on the site, excluding the Pentair sand filter
+# stock shot on the filter-maintenance page (not a job photo).
+GALLERY_ITEMS = [
+  ('single', 'JANEDOE.jpg', 'Clean backyard pool serviced by Alabama Aquatics', 'Weekly Pool Cleaning'),
+  ('pair', 'emilysbefore.jpg', 'emilysafter.jpg',
+     'Green pool before opening service', 'Clear pool after Green to Clean service',
+     'Green to Clean &mdash; Pool Opening'),
+  ('single', 'scottandginaperfect.jpg', 'Crystal clear balanced pool', 'Chemical Balancing'),
+  ('single', 'poollinerinstall.jpg', 'Technician installing a new vinyl pool liner', 'Vinyl Liner Installation'),
+  ('single', 'hottub.jpg', 'Hot tub spa serviced by Alabama Aquatics', 'Spa &amp; Hot Tub Service'),
+  ('single', 'cartridge-cleaning.jpg', 'Pool cartridge filter before and after cleaning', 'Cartridge Filter Cleaning'),
+  ('single', 'equipment.webp', 'Pool equipment pad with pump and filter', 'Equipment Repair &amp; Installs'),
+  ('single', 'pooldeckclean.jpg', 'Pool deck before and after pressure washing', 'Pool Deck Pressure Washing'),
+  ('single', 'housewash.jpg', 'House exterior before and after soft washing', 'House Soft Washing'),
+  ('single', 'sidewalkclean.jpg', 'Sidewalk before and after pressure washing', 'Sidewalk Pressure Washing'),
+  ('single', 'poolcover.jpg', 'Pool covered for winter', 'Pool Closings &amp; Winterization'),
+]
+
+def gallery_card(item):
+    if item[0] == 'single':
+        _, img, alt, cap = item
+        return f"""    <figure class="gallery-card">
+      <img src="/images/{img}" alt="{alt}" loading="lazy" onerror="this.style.display='none'">
+      <figcaption>{cap}</figcaption>
+    </figure>"""
+    _, img1, img2, alt1, alt2, cap = item
+    return f"""    <figure class="gallery-card gallery-card-pair">
+      <div class="gallery-pair-imgs">
+        <img src="/images/{img1}" alt="{alt1}" loading="lazy" onerror="this.style.display='none'">
+        <img src="/images/{img2}" alt="{alt2}" loading="lazy" onerror="this.style.display='none'">
+      </div>
+      <figcaption>{cap}</figcaption>
+    </figure>"""
+
+def build_gallery_page():
+    url = f"{BASE}/gallery/"
+    doc = head(
+      "Photo Gallery | Alabama Aquatics",
+      "Real pools, spas and properties serviced by Alabama Aquatics in Greater Birmingham — pool cleaning, green-to-clean transformations, liner installs, equipment repair and pressure washing.",
+      url,
+    )
+    doc += header()
+    doc += f"""<main id="main">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a> &nbsp;/&nbsp; <span>Gallery</span>
+  </nav>
+  <header class="service-hero">
+    <p class="eyebrow">Our Work &bull; Greater Birmingham</p>
+    <h1>Photo Gallery</h1>
+    <p class="lede">A look at real pools, spas and properties we&apos;ve serviced across Greater Birmingham.</p>
+  </header>
+  <div class="gallery-grid">
+{chr(10).join(gallery_card(i) for i in GALLERY_ITEMS)}
+  </div>
+  {CTA}
+</main>
+"""
+    doc += footer()
+    doc += "\n</body>\n</html>\n"
+    doc = add_asset_versions(doc)
+    folder = os.path.join(OUT, 'gallery')
+    os.makedirs(folder, exist_ok=True)
+    open(os.path.join(folder, 'index.html'), 'w', encoding='utf-8').write(doc)
+    print('wrote gallery/index.html', len(doc))
+
+build_gallery_page()
+
+# ----------------------------------------------------------------------------
 # HOME PAGE
 # ----------------------------------------------------------------------------
 def home_cards():
@@ -742,7 +818,7 @@ print('wrote index.html', len(home))
 # ----------------------------------------------------------------------------
 from datetime import date
 today = date.today().isoformat()
-urls = [f"{BASE}/"] + [f"{BASE}/{s}/" for s in ORDER]
+urls = [f"{BASE}/"] + [f"{BASE}/{s}/" for s in ORDER] + [f"{BASE}/gallery/"]
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 for u in urls:
     pr = '1.0' if u.endswith('/') and u.count('/') == 3 else '0.8'
