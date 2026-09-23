@@ -314,7 +314,7 @@ S['chemical-balancing'] = dict(
   eyebrow="Water Chemistry &bull; Chemical Check Service",
   h1="Properly Balanced Water. Every Time.",
   lede="Balanced water protects your equipment, extends the life of your pool surface, and keeps your family safe. We take the guesswork out of it entirely.",
-  body="""      <img src="/images/scottandginaperfect.jpg" alt="Crystal clear balanced pool" class="photo" loading="lazy" onerror="this.style.display='none'">
+  body="""      <img src="/images/water-test-kit.jpg" alt="Testing pool water chemistry poolside" class="photo" loading="lazy" onerror="this.style.display='none'">
       <p>Keeping your pool water chemically balanced isn't just about keeping it clear &mdash; it protects your equipment, extends the life of your pool surface, and most importantly keeps your family safe. At Alabama Aquatics we take the guesswork out of it entirely.</p>
       <h2>What We Test and Adjust Every Visit</h2>
       <ul>
@@ -414,7 +414,7 @@ S['filter-maintenance'] = dict(
       <p>At Alabama Aquatics we clean cartridge filters using water and a specially formulated solution designed to break down all built-up residue while conditioning the filter material to protect it for future use. Most cartridge filters should be cleaned every 4 to 6 months &mdash; and we are happy to put you on a regular schedule so it never gets overlooked.</p>
       <p><strong>Spa customers receive complimentary cartridge filter cleanings every 2 weeks</strong> as part of their service. <a class="inline-link" href="/spa-service">Learn more about our Spa Service.</a></p>
       <h2>Sand Filter Changes</h2>
-      <img src="/images/pentair-sand-dollar.jpg" alt="Pentair Sand Dollar pool filter" class="photo photo-contain" loading="lazy" onerror="this.style.display='none'">
+      <img src="/images/sand-filter-poolside.jpg" alt="Sand filter installed poolside" class="photo" loading="lazy" onerror="this.style.display='none'">
       <p>Sand filters are incredibly durable and low maintenance &mdash; but the sand inside doesn't last forever. Over time the sand becomes coated and worn down, losing its ability to trap debris and properly filter your water. Most sand filters need a full sand change every 3 to 5 years.</p>
       <p>Alabama Aquatics handles the complete sand change process from start to finish &mdash; draining, removing the old sand, replacing it with fresh filter media, and getting your system back up and running properly.</p>
       <h2>Filter Installs and Upgrades</h2>
