@@ -656,7 +656,7 @@ def build_gallery_page():
     <a href="/">Home</a> &nbsp;/&nbsp; <span>Gallery</span>
   </nav>
   <header class="service-hero">
-    <p class="eyebrow">Our Work &bull; Greater Birmingham</p>
+    <p class="eyebrow">Our Work</p>
     <h1>Photo Gallery</h1>
   </header>
   <div class="gallery-grid">
