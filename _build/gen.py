@@ -658,7 +658,6 @@ def build_gallery_page():
   <header class="service-hero">
     <p class="eyebrow">Our Work &bull; Greater Birmingham</p>
     <h1>Photo Gallery</h1>
-    <p class="lede">A look at real pools, spas and properties we&apos;ve serviced across Greater Birmingham.</p>
   </header>
   <div class="gallery-grid">
 {chr(10).join(gallery_card(i) for i in GALLERY_ITEMS)}
