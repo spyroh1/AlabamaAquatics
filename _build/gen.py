@@ -627,6 +627,11 @@ GALLERY_ITEMS = [
   ('pair', 'emilysbefore.jpg', 'emilysafter.jpg',
      'Green pool before opening service', 'Clear pool after Green to Clean service'),
   ('single', 'equipment.webp', 'Pool equipment pad with pump and filter'),
+  ('single', 'pool-steps-wooded-lot.jpg', 'Clear vinyl liner pool with built-in steps on a wooded lot'),
+  ('single', 'pool-sunny-lounge-deck.jpg', 'Clear backyard pool with a lounge deck on a sunny day'),
+  ('single', 'pool-black-fence-backyard.jpg', 'Clear fenced-in backyard pool serviced by Alabama Aquatics'),
+  ('single', 'pool-brick-patio-pavilion.jpg', 'Clear pool with a brick patio and poolside pavilion'),
+  ('single', 'pool-diving-board-brick-coping.jpg', 'Clear pool with a diving board and brick coping'),
 ]
 
 def gallery_card(item):
